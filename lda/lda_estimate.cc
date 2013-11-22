@@ -52,7 +52,8 @@ void LDA::RunEM(const Str &type, const Corpus &corpus,
   int i = 0;
   while (((converged < 0) || (converged > em_converged_) ||
                           (i <= 2)) && (i++ <= em_max_iter_)) {
-    LOG(INFO) << i;
+    // LOG(INFO) << i;
+    std::cout << "repeat " << i << std::endl;
     double likelihood = 0;
     InitSS(model, 0, &ss);
     for (int d = 0; d < corpus.num_docs; d++) {

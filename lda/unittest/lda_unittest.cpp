@@ -55,6 +55,7 @@ TEST(LDATest, LikelihoodTest) {
 }
 
 TEST(LDATest, LDATest) {
+  std::cout << "aa";
   long t1;
   (void) time(&t1);
   seedMT(t1);

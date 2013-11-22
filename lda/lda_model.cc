@@ -56,7 +56,8 @@ void NewLdaSuffStats(const LdaModel &m, LdaSuffStats* ss) {
 
 void InitSS(const LdaModel &model, double value, LdaSuffStats* ss) {
   for (int k = 0; k < model.num_topics; k++) {
-    LOG(INFO) << k;
+    //LOG(INFO) << k;
+    std::cout << k << std::endl;
     ss->class_total[k] = value;
     for (int w = 0; w < model.num_terms; w++) {
       ss->class_word[k][w] = value;
