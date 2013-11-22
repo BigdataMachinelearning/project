@@ -11,7 +11,7 @@ TEST(LDATest, ReadDataTest) {
   Corpus c;
   ReadFileToCorpus(data.c_str(), &c);
   EXPECT_EQ(10473,  c.num_terms);
-  EXPECT_EQ(2246,  c.num_docs);
+  EXPECT_EQ(2246,  c.docs.size());
   EXPECT_EQ(186,  c.docs[0].length);
   EXPECT_EQ(263,  c.docs[0].total);
   EXPECT_EQ(6144,  c.docs[0].words[1]);
@@ -74,12 +74,36 @@ TEST(LDATest, LDATest) {
   ReadFileToCorpus(data.c_str(), &c);
   Str result = "result/result";
   Str mode = "seeded";
-  double** gamma = NewArray(c.num_docs, n_topic);
+  double** gamma = NewArray(c.docs.size(), n_topic);
   double** phi = NewArray(MaxCorpusLen(c), n_topic);
   lda.RunEM(mode, c, gamma, phi);
-  WriteStrToFile(Join(gamma, c.num_docs, n_topic), "gamma");
+  WriteStrToFile(Join(gamma, c.docs.size(), n_topic), "gamma");
 }
  
+TEST(LDATest, GibbsTest) {
+  long t1;
+  (void) time(&t1);
+  seedMT(t1);
+  float em_converged = 1e-4;
+  int em_max_iter = 100;
+  int em_estimate_alpha = 1;
+  int var_max_iter = 20;
+  double var_converged = 1e-2;
+  double initial_alpha = 0.1;
+  int n_topic = 10;
+  LDA lda;
+  lda.Init(em_converged, em_max_iter, em_estimate_alpha, var_max_iter,
+                         var_converged, initial_alpha, n_topic);
+  Str data = "../data/ap.dat";
+  Corpus c;
+  ReadFileToCorpus(data.c_str(), &c);
+  Str result = "result/result";
+  Str mode = "seeded";
+  double** gamma = NewArray(c.docs.size(), n_topic);
+  double** phi = NewArray(MaxCorpusLen(c), n_topic);
+  lda.RunEM(mode, c, gamma, phi);
+  WriteStrToFile(Join(gamma, c.docs.size(), n_topic), "gamma");
+}
 } // namespace topic
 
 int main(int argc, char* argv[]) {

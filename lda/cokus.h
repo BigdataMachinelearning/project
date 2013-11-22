@@ -21,5 +21,7 @@ const int M = 397;           // a period parameter
 void seedMT(uint32 seed);
 uint32 reloadMT(void);
 uint32 randomMT(void);
-
+inline double myrand() {
+  return (double) (((unsigned long) randomMT()) / 4294967296.);
+}
 #endif

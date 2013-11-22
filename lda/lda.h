@@ -2,37 +2,51 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #ifndef LDA_LDA_H
 #define LDA_LDA_H
-#define OFFSET 0;                  // offset for reading data
 #include "base/base_head.h"
-typedef struct Document {
-  int* words;
-  int* counts;
-  int length;
+namespace topic {
+struct Document {
+  // int* words;
+  // int* counts;
+  VInt words;
+  VInt counts;
   int total;
-  Document () : words(NULL), counts(NULL), length(0), total(0) {}
-} document;
+  Document () : total(0) {}
+};
 
-typedef struct Corpus {
-  document* docs;
+struct Corpus {
+  std::vector<Document> docs;
   int num_terms;
-  int num_docs;
-  Corpus () : docs(NULL), num_terms(0), num_docs(0) { }
-} corpus;
+  Corpus () : num_terms(0) {}
+};
 
-typedef struct {
+// alpha, beta : hpyerparameter; 
+// log_prob_w : topic-word distribution
+// theta : document-topic distribution
+struct LdaModel {
   double alpha;
+  double beta;
   double** log_prob_w;
+  VVReal theta;
+  VVReal phi;
   int num_topics;
   int num_terms;
-} lda_model, LdaModel;
+  LdaModel () : alpha(0), log_prob_w(NULL), num_topics(0), num_terms(0) { }
+};
 
-typedef struct {
+struct LdaSuffStats {
+  VVInt ss_phi;
+  VVInt ss_theta; 
+  VInt sum_ss_phi;
+  VInt sum_ss_theta; 
   double** class_word;
   double* class_total;
   double alpha_suffstats;
   int num_docs;
-} lda_suffstats, LdaSuffStats;
+  LdaSuffStats () : class_word(NULL), class_total(NULL),
+                    alpha_suffstats(0), num_docs(0) { }
+};
 
 void ReadFileToCorpus(const char* filename, Corpus* corpus);
 int MaxCorpusLen(const Corpus &c);
+} // namespace topic
 #endif // LDA_LDA_H

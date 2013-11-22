@@ -15,14 +15,14 @@ class LDA {
   inline void Init(float em_converged, int em_max_iter, int estimate_alpha,
                    int var_max_iter, int var_converged_,
                    double initial_alpha, int n_topic);
-  double DocEStep(Document* doc, double* gamma, double** phi,
+  double DocEStep(const Document &doc, double* gamma, double** phi,
                                  LdaModel* model, LdaSuffStats* ss);
   void RunEM(const Str &mode, const Corpus &corpus,
              double** var_gamma, double** phi);
   void CreateSS(const Str &mode, const Corpus &c,
                 LdaModel* model, LdaSuffStats* ss);
-  double Inference(Document*, LdaModel*, double*, double**);
-  double Likelihood(Document*, LdaModel*, double**, double*);
+  double Inference(const Document &, LdaModel*, double*, double**);
+  double Likelihood(const Document &, LdaModel*, double**, double*);
   double Likelihood(const Document &doc, const LdaModel &m, 
                     const VVReal &phi, const VReal &gamma) const;
  private:

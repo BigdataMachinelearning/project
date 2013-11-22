@@ -12,8 +12,12 @@ cokus.o:
 lda_model.o:
 	$(CC) $(CXXFLAGS) $(WorkDir)/lda_model.cc $(Include) -Wno-deprecated
 
+lda_infer_gibbs.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/lda/lda_infer_gibbs.cc $(Include) -Wno-deprecated
+
 string_util.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/base/string_util.cc $(Include) -Wno-deprecated
 
 join.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/base/join.cc $(Include) -Wno-deprecated
+

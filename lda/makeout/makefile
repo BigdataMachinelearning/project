@@ -8,6 +8,7 @@ $(name)_update_dep:=\
   join.o\
   lda.o\
   lda_estimate.o\
+  lda_infer_gibbs.o\
   lda_model.o\
   string_util.o
 $(name)_remain_dep:=\

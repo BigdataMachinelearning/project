@@ -22,6 +22,7 @@
 #include "base/base_head.h"
 
 namespace topic {
+const int NUM_INIT = 1;
 void LdaMLE(int estimate_alpha, LdaModel* m, LdaSuffStats* ss) {
   for (int k = 0; k < m->num_topics; k++) {
     for (int w = 0; w < m->num_terms; w++) {
@@ -79,7 +80,8 @@ void RandomInitSS(const LdaModel &m, LdaSuffStats* ss) {
 void CorpusInitSS(const Corpus &c, const LdaModel &m, LdaSuffStats* ss) {
   for (int k = 0; k < m.num_topics; k++) {
     for (int i = 0; i < NUM_INIT; i++) {
-      const Document &doc = c.docs[static_cast<int>(floor(myrand() * c.num_docs))];
+      const Document &doc =
+       c.docs[static_cast<int>(floor(myrand() * c.docs.size()))];
       for (int n = 0; n < doc.length; n++) {
         ss->class_word[k][doc.words[n]] += doc.counts[n];
       }
@@ -91,8 +93,8 @@ void CorpusInitSS(const Corpus &c, const LdaModel &m, LdaSuffStats* ss) {
   }
 }
 
-#define NEWTON_THRESH 1e-5
-#define MAX_ALPHA_ITER 1000
+const double  NEWTON_THRESH = 1e-5;
+const int MAX_ALPHA_ITER = 1000;
 double OptAlpha(double ss, int d, int k) {
   double init_a = 100;
   double log_a = log(init_a);

@@ -10,8 +10,8 @@
 #include "lda/lda.h"
 
 namespace topic {
-double LDA::DocEStep(document* doc, double* gamma, double** phi,
-                     lda_model* model, lda_suffstats* ss) {
+double LDA::DocEStep(const Document &doc, double* gamma, double** phi,
+                     LdaModel* model, LdaSuffStats* ss) {
   double likelihood = Inference(doc, model, gamma, phi);
   double gamma_sum = 0;
   for (int k = 0; k < model->num_topics; k++) {
@@ -19,10 +19,10 @@ double LDA::DocEStep(document* doc, double* gamma, double** phi,
     ss->alpha_suffstats += DiGamma(gamma[k]);
   }
   ss->alpha_suffstats -= model->num_topics * DiGamma(gamma_sum);
-  for (int n = 0; n < doc->length; n++) {
+  for (int n = 0; n < doc.length; n++) {
     for (int k = 0; k < model->num_topics; k++) {
-      ss->class_word[k][doc->words[n]] += doc->counts[n]*phi[n][k];
-      ss->class_total[k] += doc->counts[n]*phi[n][k];
+      ss->class_word[k][doc.words[n]] += doc.counts[n]*phi[n][k];
+      ss->class_total[k] += doc.counts[n]*phi[n][k];
     }
   }
   ss->num_docs = ss->num_docs + 1;
@@ -56,8 +56,8 @@ void LDA::RunEM(const Str &type, const Corpus &corpus,
     std::cout << "repeat " << i << std::endl;
     double likelihood = 0;
     InitSS(model, 0, &ss);
-    for (int d = 0; d < corpus.num_docs; d++) {
-      likelihood += DocEStep(&(corpus.docs[d]), gamma[d], phi, &model, &ss);
+    for (size_t d = 0; d < corpus.docs.size(); d++) {
+      likelihood += DocEStep(corpus.docs[d], gamma[d], phi, &model, &ss);
     }
     LdaMLE(estimate_alpha_, &model, &ss);
     converged = (likelihood_old - likelihood) / (likelihood_old);
@@ -90,8 +90,8 @@ double LDA::Likelihood(const Document &doc, const LdaModel &m,
   return l;
 }
 
-double LDA::Likelihood(document* doc, lda_model* model, double** phi,
-                                                        double* gamma) {
+double LDA::Likelihood(const Document &doc, LdaModel* model, double** phi,
+                                                       double* gamma) {
   const int &num_topic = model->num_topics;
   const double &alpha = model->alpha;
   double dig[num_topic];
@@ -106,11 +106,11 @@ double LDA::Likelihood(document* doc, lda_model* model, double** phi,
   for (int k = 0; k < num_topic; k++) {
     likelihood += (alpha - 1)*(dig[k] - digsum) + lgamma(gamma[k])
 	                              - (gamma[k] - 1)*(dig[k] - digsum);
-    for (int n = 0; n < doc->length; n++) {
+    for (int n = 0; n < doc.length; n++) {
       if (phi[n][k] > 0) {
-        likelihood += doc->counts[n]*
+        likelihood += doc.counts[n]*
           (phi[n][k]*((dig[k] - digsum) - log(phi[n][k])
-          + model->log_prob_w[k][doc->words[n]]));
+          + model->log_prob_w[k][doc.words[n]]));
       }
     }
   }
@@ -128,20 +128,20 @@ void InitVar(const Document &doc, const LdaModel &model,
   }
 }
 
-double LDA::Inference(document* doc, lda_model* model, double* gamma,
-                                                       double** phi) {
+double LDA::Inference(const Document &doc, LdaModel* model, double* gamma,
+                                                            double** phi) {
   double converged = 1;
   double digamma_gam[model->num_topics];
-  InitVar(*doc, *model, digamma_gam, gamma, phi);
+  InitVar(doc, *model, digamma_gam, gamma, phi);
   double likelihood_old = 0;
   int it = 1;
   while ((converged > var_converged_) && (it++ < var_max_iter_)) {
-    for (int n = 0; n < doc->length; n++) {
+    for (int n = 0; n < doc.length; n++) {
       double phisum = 0;
       double oldphi[model->num_topics];
       for (int k = 0; k < model->num_topics; k++) {
         oldphi[k] = phi[n][k];
-        phi[n][k] = digamma_gam[k] + model->log_prob_w[k][doc->words[n]];
+        phi[n][k] = digamma_gam[k] + model->log_prob_w[k][doc.words[n]];
         if (k > 0) {
           phisum = LogSum(phisum, phi[n][k]);
         } else {
@@ -150,7 +150,7 @@ double LDA::Inference(document* doc, lda_model* model, double* gamma,
       }
       for (int k = 0; k < model->num_topics; k++) {
         phi[n][k] = exp(phi[n][k] - phisum);
-        gamma[k] = gamma[k] + doc->counts[n]*(phi[n][k] - oldphi[k]);
+        gamma[k] = gamma[k] + doc.counts[n]*(phi[n][k] - oldphi[k]);
         digamma_gam[k] = DiGamma(gamma[k]);
       }
     }
