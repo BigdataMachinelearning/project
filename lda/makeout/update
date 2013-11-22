@@ -1,0 +1,19 @@
+include makefile.config
+
+lda.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/lda.cc $(Include) -Wno-deprecated
+
+lda_estimate.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/lda_estimate.cc $(Include) -Wno-deprecated
+
+cokus.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/cokus.cc $(Include) -Wno-deprecated
+
+lda_model.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/lda_model.cc $(Include) -Wno-deprecated
+
+string_util.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/string_util.cc $(Include) -Wno-deprecated
+
+join.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/join.cc $(Include) -Wno-deprecated

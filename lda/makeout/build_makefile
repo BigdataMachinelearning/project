@@ -1,0 +1,16 @@
+GTestDir:=$(BaseDir)/thirdparty/gtest
+Include:=\
+  -I$(BaseDir)\
+  -I$(GTestDir)/include\
+  -I$(HOME)/google-library/include\
+  -I/usr/include/eigen2
+
+Lib:=\
+  -L$(HOME)/google-library/lib
+
+Link:=\
+  -lgflags\
+  -lglog\
+  -lpthread
+P:=$(Include) $(Lib) $(Link)
+

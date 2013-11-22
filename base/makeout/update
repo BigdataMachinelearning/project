@@ -1,0 +1,7 @@
+include makefile.config
+
+string_util.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/string_util.cc $(Include) -Wno-deprecated
+
+join.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/join.cc $(Include) -Wno-deprecated
