@@ -5,10 +5,11 @@
 #include "base/base_head.h"
 namespace topic {
 struct Document {
-  // int* words;
-  // int* counts;
-  VInt words;
-  VInt counts;
+  int* words;
+  int* counts;
+  // VInt words;
+  // VInt counts;
+  int length;
   int total;
   Document () : total(0) {}
 };
