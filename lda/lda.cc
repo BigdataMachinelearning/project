@@ -14,10 +14,12 @@ void ReadFileToCorpus(const char* filename, Corpus* c) {
   int length;
   while ((fscanf(fileptr, "%10d", &length) != EOF)) {
     Document doc;
-    doc.length = length;
+    // doc.length = length;
     doc.total = 0;
-    doc.words = new int[sizeof(int)*length];
-    doc.counts = new int[sizeof(int)*length];
+    // doc.words = new int[sizeof(int)*length];
+    doc.words.resize(length);
+    //doc.counts = new int[sizeof(int)*length];
+    doc.counts.resize(length);
     int count;
     int word;
     for (int n = 0; n < length; n++) {
@@ -43,8 +45,8 @@ void ReadFileToCorpus(const char* filename, Corpus* c) {
 int MaxCorpusLen(const Corpus &c) {
   int max_len = 0;
   for (size_t i = 0; i < c.docs.size(); i++) {
-    if (c.docs[i].length > max_len) {
-      max_len = c.docs[i].length;
+    if (c.docs[i].Len() > max_len) {
+      max_len = static_cast<int>(c.docs[i].words.size());
     }
   }
   return max_len;

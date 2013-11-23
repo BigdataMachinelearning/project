@@ -82,7 +82,7 @@ void CorpusInitSS(const Corpus &c, const LdaModel &m, LdaSuffStats* ss) {
     for (int i = 0; i < NUM_INIT; i++) {
       const Document &doc =
        c.docs[static_cast<int>(floor(myrand() * c.docs.size()))];
-      for (int n = 0; n < doc.length; n++) {
+      for (size_t n = 0; n < doc.words.size(); n++) {
         ss->class_word[k][doc.words[n]] += doc.counts[n];
       }
     }

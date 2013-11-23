@@ -5,19 +5,18 @@
 #include "base/base_head.h"
 namespace topic {
 struct Document {
-  int* words;
-  int* counts;
-  // VInt words;
-  // VInt counts;
-  int length;
+  VInt words;
+  VInt counts;
   int total;
   Document () : total(0) {}
+  int Len() const { return static_cast<int>(words.size());}
 };
 
 struct Corpus {
   std::vector<Document> docs;
   int num_terms;
   Corpus () : num_terms(0) {}
+  int Len() const { return static_cast<int>(docs.size());}
 };
 
 // alpha, beta : hpyerparameter; 

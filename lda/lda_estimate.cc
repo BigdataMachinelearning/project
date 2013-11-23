@@ -19,7 +19,7 @@ double LDA::DocEStep(const Document &doc, double* gamma, double** phi,
     ss->alpha_suffstats += DiGamma(gamma[k]);
   }
   ss->alpha_suffstats -= model->num_topics * DiGamma(gamma_sum);
-  for (int n = 0; n < doc.length; n++) {
+  for (int n = 0; n < doc.Len(); n++) {
     for (int k = 0; k < model->num_topics; k++) {
       ss->class_word[k][doc.words[n]] += doc.counts[n]*phi[n][k];
       ss->class_total[k] += doc.counts[n]*phi[n][k];
@@ -80,7 +80,7 @@ double LDA::Likelihood(const Document &doc, const LdaModel &m,
   double l = lgamma(m.alpha * num) - num * lgamma(m.alpha) - lgamma(g_sum);
   for (int k = 0; k < num; k++) {
     l += (m.alpha - gamma.at(k)) * expect[k] + lgamma(gamma.at(k));
-    for (int n = 0; n < doc.length; n++) {
+    for (size_t n = 0; n < doc.words.size(); n++) {
       if (phi[n][k] > 0) {
         l += doc.counts[n] * phi[n][k] * (expect[k] - log(phi[n][k])
                               + m.log_prob_w[k][doc.words[n]]);
@@ -106,7 +106,7 @@ double LDA::Likelihood(const Document &doc, LdaModel* model, double** phi,
   for (int k = 0; k < num_topic; k++) {
     likelihood += (alpha - 1)*(dig[k] - digsum) + lgamma(gamma[k])
 	                              - (gamma[k] - 1)*(dig[k] - digsum);
-    for (int n = 0; n < doc.length; n++) {
+    for (size_t n = 0; n < doc.words.size(); n++) {
       if (phi[n][k] > 0) {
         likelihood += doc.counts[n]*
           (phi[n][k]*((dig[k] - digsum) - log(phi[n][k])
@@ -122,7 +122,7 @@ void InitVar(const Document &doc, const LdaModel &model,
   for (int k = 0; k < model.num_topics; k++) {
     gamma[k] = model.alpha + (doc.total / ((double) model.num_topics));
     digamma[k] = DiGamma(gamma[k]);
-    for (int n = 0; n < doc.length; n++) {
+    for (size_t n = 0; n < doc.words.size(); n++) {
       phi[n][k] = 1.0 / model.num_topics;
     }
   }
@@ -136,7 +136,7 @@ double LDA::Inference(const Document &doc, LdaModel* model, double* gamma,
   double likelihood_old = 0;
   int it = 1;
   while ((converged > var_converged_) && (it++ < var_max_iter_)) {
-    for (int n = 0; n < doc.length; n++) {
+    for (size_t n = 0; n < doc.words.size(); n++) {
       double phisum = 0;
       double oldphi[model->num_topics];
       for (int k = 0; k < model->num_topics; k++) {

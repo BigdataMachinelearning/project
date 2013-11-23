@@ -7,6 +7,7 @@ namespace topic {
 class Corpus;
 class LdaModel;
 class LdaSuffStats;
+int Sampling(const Corpus &corpus, VVIntC &z, LdaSuffStats* suff);
 void GibbsInfer(int Num, double alpha, double beta, int m, int n,
                     VVIntC &corpus, LdaModel* model);
 void GibbsInfer(const Corpus &corpus, LdaSuffStats* ss, VVInt* z);
