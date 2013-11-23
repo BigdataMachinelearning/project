@@ -23,19 +23,18 @@
 
 namespace topic {
 const int NUM_INIT = 1;
-void LdaMLE(int estimate_alpha, LdaModel* m, LdaSuffStats* ss) {
+void LdaMLE(int estimate_alpha, const LdaSuffStats &ss, LdaModel* m) {
   for (int k = 0; k < m->num_topics; k++) {
     for (int w = 0; w < m->num_terms; w++) {
-      if (ss->class_word[k][w] > 0) {
-        m->log_prob_w[k][w] = log(ss->class_word[k][w]) -
-                              log(ss->class_total[k]);
+      if (ss.class_word[k][w] > 0) {
+        m->log_prob_w[k][w] = log(ss.class_word[k][w]) - log(ss.class_total[k]);
       } else {
         m->log_prob_w[k][w] = -100;
       }
     }
   }
   if (estimate_alpha == 1) {
-    m->alpha = OptAlpha(ss->alpha_suffstats, ss->num_docs, m->num_topics);
+    m->alpha = OptAlpha(ss.alpha_suffstats, ss.num_docs, m->num_topics);
   }
 }
 

@@ -28,6 +28,6 @@ void NewLdaSuffStats(const LdaModel &model, LdaSuffStats* ss);
 void CorpusInitSS(const Corpus &c, const LdaModel &m, LdaSuffStats* ss);
 void RandomInitSS(const LdaModel &m, LdaSuffStats* ss);
 void InitSS(const LdaModel &model, double value, LdaSuffStats* ss);
-void LdaMLE(int estimate_alpha, LdaModel* m, LdaSuffStats* ss);
+void LdaMLE(int estimate_alpha, const LdaSuffStats &ss, LdaModel* m);
 } // namespace topic
 #endif // LDA_MODEL_H
