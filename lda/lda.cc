@@ -8,8 +8,8 @@
 
 namespace topic {
 const int  OFFSET = 0;                  // offset for reading data
-void ReadFileToCorpus(const char* filename, Corpus* c) {
-  FILE *fileptr = fopen(filename, "r");
+void Corpus::LoadData(const Str &filename) {
+  FILE *fileptr = fopen(filename.c_str(), "r");
   int nw = 0;
   int length;
   while ((fscanf(fileptr, "%10d", &length) != EOF)) {
@@ -34,19 +34,19 @@ void ReadFileToCorpus(const char* filename, Corpus* c) {
         nw = word + 1;
       }
     }
-    c->docs.push_back(doc);
+    docs.push_back(doc);
   }
   fclose(fileptr);
-  c->num_terms = nw;
-  printf("number of docs    : %d\n", c->docs.size());
+  num_terms = nw;
+  printf("number of docs    : %d\n", docs.size());
   printf("number of terms   : %d\n", nw);
 }
 
-int MaxCorpusLen(const Corpus &c) {
+int Corpus::MaxCorpusLen() const {
   int max_len = 0;
-  for (size_t i = 0; i < c.docs.size(); i++) {
-    if (c.docs[i].Len() > max_len) {
-      max_len = static_cast<int>(c.docs[i].words.size());
+  for (size_t i = 0; i < docs.size(); i++) {
+    if (docs[i].Len() > max_len) {
+      max_len = static_cast<int>(docs[i].words.size());
     }
   }
   return max_len;

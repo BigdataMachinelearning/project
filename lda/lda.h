@@ -8,6 +8,7 @@ struct Document {
   VInt words;
   VInt counts;
   int total;
+
   Document () : total(0) {}
   int Len() const { return static_cast<int>(words.size());}
 };
@@ -15,8 +16,14 @@ struct Document {
 struct Corpus {
   std::vector<Document> docs;
   int num_terms;
+
   Corpus () : num_terms(0) {}
   int Len() const { return static_cast<int>(docs.size());}
+  int DocLen(int d) const { return static_cast<int>(docs[d].Len());}
+  int Word(int d, int n) const { return docs[d].words[n];}
+  int Count(int d, int n) const { return docs[d].counts[n];}
+  void LoadData(const Str &filename);
+  int MaxCorpusLen() const;
 };
 
 // alpha, beta : hpyerparameter; 
@@ -30,8 +37,10 @@ struct LdaModel {
   VVReal phi;
   int num_topics;
   int num_terms;
+
   LdaModel () : alpha(0), log_prob_w(NULL), num_topics(0), num_terms(0) { }
 };
+typedef const LdaModel LdaModelC;
 
 struct LdaSuffStats {
   VVInt ss_phi;
@@ -45,8 +54,5 @@ struct LdaSuffStats {
   LdaSuffStats () : class_word(NULL), class_total(NULL),
                     alpha_suffstats(0), num_docs(0) { }
 };
-
-void ReadFileToCorpus(const char* filename, Corpus* corpus);
-int MaxCorpusLen(const Corpus &c);
 } // namespace topic
 #endif // LDA_LDA_H
