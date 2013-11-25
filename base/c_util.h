@@ -18,7 +18,7 @@ inline double** NewArray(int row, int col) {
 
 inline void DelArray(double** a, int row) {
   for (int i = 0; i < row; i++) {
-    delete [] a[i]; 
+    delete [] a[i];
   }
   delete [] a;
 }
@@ -34,4 +34,4 @@ inline void Init(int row, int col, double value, double** des) {
     Init(col, value, des[i]);
   }
 }
-#endif // BASE_C_UTIL_H_
+#endif  // BASE_C_UTIL_H_

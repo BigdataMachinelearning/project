@@ -3,16 +3,11 @@
 #ifndef BASE_STRING_UTIL_H_
 #define BASE_STRING_UTIL_H_
 #include <sstream>
-#include <string>
-#include <vector>
 
-typedef std::string Str;
-typedef std::vector<Str> VStr;
-typedef std::vector<VStr> VVStr;
+#include "base/type.h"
 
 void SplitStr(const Str &str, char del, VStr* vec);
 void SplitStr(const Str &str, const Str &del, VStr* vec);
-
 void TrimStr(const Str &input, const Str &space, Str* output);
 Str TrimStr(const Str &input);
 bool IsWhiteSpace(char c, const Str &white_space);
@@ -33,4 +28,4 @@ inline Str ToStr(NumType num) {
 
 int StrToInt(const Str &str);
 double StrToReal(const Str &str);
-#endif // BASE_STRING_UTIL_H_
+#endif  // BASE_STRING_UTIL_H_

@@ -6,12 +6,12 @@
 #include "base/string_util.h"
 
 inline void ReadFileToStr(const Str &file, Str* str) {
-  std::ifstream in(file.c_str()); 
+  std::ifstream in(file.c_str());
   std::istreambuf_iterator<char> beg(in);
-  std::istreambuf_iterator<char> end; 
-  str->assign(beg, end); 
+  std::istreambuf_iterator<char> end;
+  str->assign(beg, end);
   in.close();
-} 
+}
 
 inline void ReadFileToStr(const Str &file, const Str &del, VStr* data) {
   Str str;
@@ -26,8 +26,8 @@ inline Str ReadFileToStr(const Str &file) {
 }
 
 inline void WriteStrToFile(const Str &str, const Str &file) {
-  std::ofstream o(file.c_str()); 
+  std::ofstream o(file.c_str());
   o << str;
   o.close();
 }
-#endif // BASE_IO_UTIL_H_
+#endif  // BASE_IO_UTIL_H_

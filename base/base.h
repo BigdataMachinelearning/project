@@ -1,7 +1,7 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
 #ifndef BASE_BASE_H_
-#define BASE_BASE_H_ 
+#define BASE_BASE_H_
 #include <cmath>
 #include "base/type.h"
 
@@ -25,10 +25,10 @@ inline void Cumulate(VReal* des) {
   }
 }
 
-inline int Random(VRealC &data) {
+inline int Random(const VReal &data) {
   VReal tmp(data);
   Cumulate(&tmp);
-  double u = ((double) random() / RAND_MAX) * tmp[tmp.size() - 1];
+  double u = (static_cast<double>(random()) / RAND_MAX) * tmp[tmp.size() - 1];
   for (VReal::size_type i = 0; i < tmp.size(); i++) {
     if (tmp[i] > u) {
       return i;
@@ -38,7 +38,7 @@ inline int Random(VRealC &data) {
 }
 
 inline int Random(int k) {
-  double u = ((double) random() / RAND_MAX) * k;
+  double u = (static_cast<double>(random()) / RAND_MAX) * k;
   return std::floor(u);
 }
-#endif // BASE_H_
+#endif  // BASE_BASE_H_

@@ -7,7 +7,7 @@
 #include "base/base.h"
 
 template <typename Iter>
-inline Str JoinStr(Iter beg, Iter end, const Str &del) {
+inline Str JoinStr(Iter beg, Iter end, StrC &del) {
   Str str;
   for (Iter it = beg; it != end; ++it) {
     str.append(*it);
@@ -16,11 +16,13 @@ inline Str JoinStr(Iter beg, Iter end, const Str &del) {
   return str;
 }
 
-Str Join(const  VStr &vec, const Str &del);
-Str Join(const VVStr &vec, const Str &del1, const Str &del2);
-Str Join(const VReal &data, const Str &del);
-Str Join(const VVReal &data, const Str &del, const Str &del2);
-Str Join(const VVVReal &data, StrC &del1, StrC &del2, StrC &del3);
+Str Join(VStrC &vec, StrC &del);
+Str Join(VVStrC &vec, StrC &del1, StrC &del2);
+Str Join(VRealC &data, StrC &del);
+Str Join(VVRealC &data, StrC &del, StrC &del2);
+Str Join(VVVRealC &data, StrC &del1, StrC &del2, StrC &del3);
+Str Join(VIntC &vec, StrC &del);
+Str Join(VVIntC &data, StrC &del1, StrC &del2);
 Str Join(double* str, int len1);
 Str Join(double** str, int len1, int len2);
 
@@ -39,4 +41,6 @@ inline Str MapToStr(T beg, T end) {
 inline Str MapToStr(const MIntInt &src) {
   return MapToStr(src.begin(), src.end());
 }
+
+
 #endif // BASE_JOIN_H_
