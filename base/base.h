@@ -4,41 +4,9 @@
 #define BASE_BASE_H_
 #include <cmath>
 #include "base/type.h"
-
-inline void Init(int len, double value, VReal* des) {
-  for (int i = 0; i < len; i++) {
-    des->push_back(value);
-  }
-}
-
-inline void Init(int row, int col, double value, VVReal* des) {
-  for (int i = 0; i < row; i++) {
-    VReal tmp;
-    Init(col, value, &tmp);
-    des->push_back(tmp);
-  }
-}
-
-inline void Cumulate(VReal* des) {
-  for (VReal::size_type i = 1; i < des->size(); i++) {
-    des->at(i) += des->at(i - 1);
-  }
-}
-
-inline int Random(const VReal &data) {
-  VReal tmp(data);
-  Cumulate(&tmp);
-  double u = (static_cast<double>(random()) / RAND_MAX) * tmp[tmp.size() - 1];
-  for (VReal::size_type i = 0; i < tmp.size(); i++) {
-    if (tmp[i] > u) {
-      return i;
-    }
-  }
-  return static_cast<int>(tmp.size());
-}
-
-inline int Random(int k) {
-  double u = (static_cast<double>(random()) / RAND_MAX) * k;
-  return std::floor(u);
-}
+void Init(int len, double value, VReal* des);
+void Init(int row, int col, double value, VVReal* des);
+void Cumulate(VReal* des);
+int Random(const VReal &data);
+int Random(int k);
 #endif  // BASE_BASE_H_

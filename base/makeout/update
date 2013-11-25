@@ -5,3 +5,6 @@ string_util.o:
 
 join.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/base/join.cc $(Include) -Wno-deprecated
+
+base.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/base.cc $(Include) -Wno-deprecated
