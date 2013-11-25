@@ -14,12 +14,37 @@ Str Join(const VVStr &vec, const Str &del1, const Str &del2) {
   return Join(tmp, del2);
 }
 
-Str Join(const VReal &data, const Str &del) {
+template <typename It>
+Str Join(It beg, It end, StrC &del) {
   VStr tmp;
-  for (VReal::size_type i = 0; i < data.size(); i++) {
-    tmp.push_back(ToStr(data[i]));
+  for (It it = beg; it != end; ++it) {
+    tmp.push_back(ToStr(*it));
   }
-  return Join(tmp, " ");
+  return Join(tmp, del);
+}
+
+Str Join(const VInt &data, const Str &del) {
+  return Join(data.begin(), data.end(), del);
+}
+
+Str Join(VVIntC &data, StrC &del1, StrC &del2) {
+  VStr tmp;
+  for (VVInt::size_type i = 0; i < data.size(); i++) {
+    tmp.push_back(Join(data.at(i), del1));
+  }
+  return Join(tmp, del2);
+}
+
+Str Join(const VReal &data, const Str &del) {
+  return Join(data.begin(), data.end(), del);
+}
+
+Str Join(const VVReal &data, const Str &del1, const Str &del2) {
+  VStr tmp;
+  for (VVReal::size_type i = 0; i < data.size(); i++) {
+    tmp.push_back(Join(data.at(i), del1));
+  }
+  return Join(tmp, del2);
 }
 
 Str Join(double* str, int len) {
@@ -37,3 +62,12 @@ Str Join(double** str, int len1, int len2) {
   }
   return Join(tmp, "\n");
 }
+
+Str Join(const VVVReal &data, StrC &del1, StrC &del2, StrC &del3) {
+  VStr tmp;
+  for (VVVReal::size_type i = 0; i < data.size(); i++) {
+    tmp.push_back(Join(data.at(i), del1, del2));
+  }
+  return Join(tmp, "\n");
+}
+
