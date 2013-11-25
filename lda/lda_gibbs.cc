@@ -1,63 +1,88 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
-#include "lda/lda_infer_gibbs.h"
+#include "lda/lda_gibbs.h"
 
 #include "lda/lda.h"
 #include "lda/lda_model.h"
+#include <map>
+
 namespace topic {
-int Sampling(int m, int n, const Corpus &corpus, VVIntC &z,
-                           const LdaModel &model, LdaSuffStats* suff) {
-  int topic = z[m][n];
-  int w = corpus.docs[m].words[n];
-  suff->ss_phi[w][topic] -= 1;
-  suff->ss_theta[m][topic] -= 1;
-  suff->sum_ss_phi[topic] -= 1;
-  suff->sum_ss_theta[m] -= 1;
-  double Vbeta = suff->ss_phi.size() * model.beta;
-  double Kalpha = suff->ss_phi[0].size() * model.alpha;    
-  VReal p(suff->ss_phi[0].size());
-  for (VReal::size_type k = 0; k < p.size(); k++) {
-    p[k] = (suff->ss_phi[w][k] + model.beta) / (suff->sum_ss_phi[k] + Vbeta) *
-    (suff->ss_theta[m][k] + model.alpha) / (suff->sum_ss_theta[m] + Kalpha);
+// void GibbsInitSS(const LdaModel &m, LdaSuffStats* ss) {
+void UpdataSuff(int m, int k, int v, int value, LdaSuffStats* suff) {
+  suff->phi[k][v] += value;
+  suff->theta[m][k] += value;
+  suff->sum_phi[k] += value;
+  suff->sum_theta[m] += value;
+}
+
+void Init(CorpusC &corpus, VVInt* z) {
+  z->resize(corpus.Len());
+  for (int i = 0; i < corpus.Len(); i++) {
+    z->at(i).resize(corpus.DocLen(i));
   }
-  for (VReal::size_type k = 1; k < p.size(); k++) {
-    p[k] += p[k - 1];
-  }
-  double u = ((double)random() / RAND_MAX) * p[p.size() - 1];
-  for (topic = 0; topic < static_cast<int>(p.size()); topic++) {
-    if (p[topic] > u) {
-      break;
+}
+
+void GibbsInitSS(CorpusC &corpus, int k, VVInt* z, LdaSuffStats* ss) {
+  Init(corpus, z);
+  MIntInt dic; // for test
+  ss->Init(corpus.Len(), k, corpus.num_terms);
+  for (int m = 0; m < corpus.Len(); m++) {
+    for (int n = 0; n < corpus.DocLen(m); n++) {
+      for (int i = 0; i < corpus.Count(m, n); i++) {
+        (*z)[m][n] = Random(k);
+        dic[(*z)[m][n]]++; // for test
+        UpdataSuff(m, (*z)[m][n], corpus.Word(m, n), 1, ss);
+      }
     }
   }
-  suff->ss_phi[w][topic] += 1;
-  suff->ss_theta[m][topic] += 1;
-  suff->sum_ss_phi[topic] += 1;
-  suff->sum_ss_theta[m] += 1;
+  LOG(INFO) << MapToStr(dic); //for test
+}
+
+int Sampling(int m, int n, CorpusC &corpus, VVIntC &z, LdaModelC &model,
+                                                       LdaSuffStats* suff) {
+  int topic = z[m][n];
+  int w = corpus.Word(m, n);
+  UpdataSuff(m, topic, w, -1, suff);
+  double Vbeta = suff->phi[0].size() * model.beta;
+  double Kalpha = suff->phi.size() * model.alpha;    
+  VReal p(suff->phi.size());
+  for (VReal::size_type k = 0; k < p.size(); k++) {
+    p[k] = (suff->phi[k][w] + model.beta) / (suff->sum_phi[k] + Vbeta) *
+    (suff->theta[m][k] + model.alpha) / (suff->sum_theta[m] + Kalpha);
+  }
+  topic = Random(p);
+  UpdataSuff(m, topic, w, 1, suff);
   return topic;
 }
 
-void ComputeTheta(const LdaSuffStats &suff, LdaModel* model) {
-  for (VVInt::size_type m = 0; m < suff.ss_theta.size(); m++) {
-    for (VInt::size_type k = 0; k < suff.ss_theta[m].size(); k++) {
-      model->theta[m][k] = (suff.ss_theta[m][k] + model->alpha) /
-      (suff.sum_ss_theta[m] + suff.ss_theta[m].size() * model->alpha);
+void ComputeTheta(LdaSuffStatsC &suff, LdaModel* model) {
+  model->theta.resize(suff.theta.size());
+  for (VVInt::size_type m = 0; m < suff.theta.size(); m++) {
+    model->theta[m].resize(suff.theta[m].size());
+    for (VInt::size_type k = 0; k < suff.theta[m].size(); k++) {
+      model->theta[m][k] = (suff.theta[m][k] + model->alpha) /
+      (suff.sum_theta[m] + suff.theta[m].size() * model->alpha);
     }
   }
 }
 
 void ComputePhi(const LdaSuffStats &suff, LdaModel* model) {
-  for (VVInt::size_type k = 0; k < suff.ss_phi.size(); k++) {
-    for (VInt::size_type w = 0; w < suff.ss_phi[k].size(); w++) {
-      model->phi[k][w] = (suff.ss_phi[w][k] + model->beta) / 
-        (suff.sum_ss_theta[k] + suff.ss_phi[k].size() * model->beta);
+  model->phi.resize(suff.phi.size());
+  for (VVInt::size_type k = 0; k < suff.phi.size(); k++) {
+    model->phi[k].resize(suff.phi[k].size());
+    for (VInt::size_type w = 0; w < suff.phi[k].size(); w++) {
+      model->phi[k][w] = (suff.phi[k][w] + model->beta) / 
+        (suff.sum_theta[k] + suff.phi[k].size() * model->beta);
     }
   }
 }
 
-void GibbsInfer(int Num, const Corpus &corpus, LdaModel* model) {
+void GibbsInfer(int Num, int k, CorpusC &corpus, LdaModel* model) {
   VVInt z;
   LdaSuffStats suff;
+  GibbsInitSS(corpus, k, &z, &suff);
   for (int i = 0; i <= Num; ++i) { 
+    LOG(INFO) << i;
     for (int m = 0; m < corpus.Len(); m++) { 
       for (int n = 0; n < corpus.docs[m].Len(); n++) { 
         z[m][n] = Sampling(m, n, corpus, z, *model, &suff); 
@@ -67,20 +92,4 @@ void GibbsInfer(int Num, const Corpus &corpus, LdaModel* model) {
   ComputeTheta(suff, model); 
   ComputePhi(suff, model); 
 } 
-
-void GibbsInfer(const Corpus &corpus, int k, LdaSuffStats* ss, VVInt* z) {
-  z->resize(corpus.Len());
-  for (int m = 0; m < corpus.Len(); m++) {
-    z->at(m).resize(corpus.docs[m].Len());
-    for (int n = 0; n < corpus.docs[m].Len(); n++) {
-      int w = corpus.docs[m].words[n];
-      int topic = (int)(((double)random() / RAND_MAX) * k);
-      z->at(m).at(n) = topic;
-      ss->ss_phi[w][topic] += 1;
-      ss->ss_theta[m][topic] += 1;
-      ss->sum_ss_phi[topic] += 1;
-    } 
-    ss->sum_ss_theta[m] = corpus.docs[m].Len();
-  }    
-}
 } // namespace topic

@@ -7,39 +7,33 @@
 #include <cstdlib>
 
 namespace topic {
-const int  OFFSET = 0;                  // offset for reading data
 void Corpus::LoadData(const Str &filename) {
   FILE *fileptr = fopen(filename.c_str(), "r");
-  int nw = 0;
-  int length;
+  int length = 0;
+  num_terms = 0;
   while ((fscanf(fileptr, "%10d", &length) != EOF)) {
     Document doc;
-    // doc.length = length;
     doc.total = 0;
-    // doc.words = new int[sizeof(int)*length];
     doc.words.resize(length);
-    //doc.counts = new int[sizeof(int)*length];
     doc.counts.resize(length);
-    int count;
-    int word;
     for (int n = 0; n < length; n++) {
+      int count;
+      int word;
       if (fscanf(fileptr, "%10d:%10d", &word, &count) == 0) {
         continue;
       }
-      word = word - OFFSET;
       doc.words[n] = word;
       doc.counts[n] = count;
       doc.total += count;
-      if (word >= nw) {
-        nw = word + 1;
+      if (word >= num_terms) {
+        num_terms = word + 1;
       }
     }
     docs.push_back(doc);
   }
   fclose(fileptr);
-  num_terms = nw;
   printf("number of docs    : %d\n", docs.size());
-  printf("number of terms   : %d\n", nw);
+  printf("number of terms   : %d\n", num_terms);
 }
 
 int Corpus::MaxCorpusLen() const {
@@ -50,5 +44,18 @@ int Corpus::MaxCorpusLen() const {
     }
   }
   return max_len;
+}
+
+void LdaSuffStats::Init(int m, int k, int v) {
+  phi.resize(k);
+  sum_phi.resize(k);
+  for (int i = 0; i < k; i++) {
+    phi[i].resize(v);
+  }
+  theta.resize(m);
+  sum_theta.resize(m);
+  for (int i = 0; i < m; i++) {
+    theta[i].resize(k);
+  }
 }
 } // namespace topic

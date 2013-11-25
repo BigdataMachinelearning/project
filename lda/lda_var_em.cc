@@ -4,38 +4,18 @@
 
 #include "base/base_head.h"
 #include "lda/lda.h"
+#include "lda/lda_gibbs.h"
 
 namespace topic {
-double LDA::DocEStep(int d, const LdaModel &model, double* gamma, double** phi,
-                                                           LdaSuffStats* ss) {
-  double likelihood = Infer(d, model, gamma, phi);
-  double gamma_sum = 0;
-  for (int k = 0; k < model.num_topics; k++) {
-    gamma_sum += gamma[k];
-    ss->alpha_suffstats += DiGamma(gamma[k]);
-  }
-  ss->alpha_suffstats -= model.num_topics * DiGamma(gamma_sum);
-  for (int n = 0; n < corpus.DocLen(d); n++) {
-    for (int k = 0; k < model.num_topics; k++) {
-      ss->class_word[k][corpus.Word(d, n)] += corpus.Count(d, n) * phi[n][k];
-      ss->class_total[k] += corpus.Count(d, n) * phi[n][k];
-    }
-  }
-  ss->num_docs = ss->num_docs + 1;
-  return likelihood;
-}
-
-void LDA::CreateSS(const Str &type, const Corpus &c,
-                   const LdaModel &m, LdaSuffStats* ss) const {
-  if (type == "seeded") {
+void LDA::CreateSS(StrC &t, CorpusC &c, LdaModelC &m, LdaSuffStats* ss) const {
+  if (t == "seeded") {
     CorpusInitSS(c, m, ss);
-  } else if (type == "random") {
+  } else if (t == "random") {
     RandomInitSS(m, ss);
   }
 }
 
-double LDA::Likelihood(int d, const LdaModel &m, const VReal &gamma,
-                                      const VVReal &phi) const {
+double LDA::Likelihood(int d, LdaModelC &m, VRealC &gamma, VVRealC &phi) const {
   double g_sum = std::accumulate(gamma.begin(), gamma.end(), 0.0);
   double digsum = DiGamma(g_sum);
   const int &num = m.num_topics;
@@ -56,34 +36,8 @@ double LDA::Likelihood(int d, const LdaModel &m, const VReal &gamma,
   return l;
 }
 
-double LDA::Likelihood(int d, const LdaModel &m, double** phi, double* gamma) {
-  const int &num_topic = m.num_topics;
-  const double &alpha = m.alpha;
-  double dig[num_topic];
-  double gamma_sum = 0;
-  for (int k = 0; k < num_topic; k++) {
-    dig[k] = DiGamma(gamma[k]);
-    gamma_sum += gamma[k];
-  }
-  double digsum = DiGamma(gamma_sum);
-  double likelihood = lgamma(alpha * num_topic) - num_topic * lgamma(alpha)
-	                                        - lgamma(gamma_sum);
-  for (int k = 0; k < num_topic; k++) {
-    likelihood += (alpha - 1)*(dig[k] - digsum) + lgamma(gamma[k])
-	                              - (gamma[k] - 1)*(dig[k] - digsum);
-    for (int n = 0; n < corpus.DocLen(d); n++) {
-      if (phi[n][k] > 0) {
-        likelihood += corpus.Count(d, n) *
-          (phi[n][k]*((dig[k] - digsum) - log(phi[n][k])
-          + m.log_prob_w[k][corpus.Word(d, n)]));
-      }
-    }
-  }
-  return likelihood;
-}
-
-void LDA::InitVar(int d, const LdaModel &m, VReal* digamma,
-                         VReal* ga, VVReal* phi) const {
+void LDA::InitVar(int d, LdaModelC &m, VReal* digamma, VReal* ga,
+                                                       VVReal* phi) const {
   ga->resize(m.num_topics);
   digamma->resize(m.num_topics);
   phi->resize(corpus.DocLen(d));
@@ -132,79 +86,6 @@ double LDA::Infer(int d, LdaModelC &m, VReal* ga, VVReal* phi) const {
   return likelihood_old;
 }
 
-void LDA::InitVar(const Document &doc, const LdaModel &model,
-             double* digamma, double* gamma, double** phi) const {
-  for (int k = 0; k < model.num_topics; k++) {
-    gamma[k] = model.alpha + (doc.total / ((double) model.num_topics));
-    digamma[k] = DiGamma(gamma[k]);
-    for (size_t n = 0; n < doc.words.size(); n++) {
-      phi[n][k] = 1.0 / model.num_topics;
-    }
-  }
-}
-
-double LDA::Infer(int d, const LdaModel &m, double* gamma, double** phi) {
-  double converged = 1;
-  double digamma_gam[m.num_topics];
-  InitVar(corpus.docs[d], m, digamma_gam, gamma, phi);
-  double likelihood_old = 0;
-  int it = 1;
-  while ((converged > var_converged_) && (it++ < var_max_iter_)) {
-    for (int n = 0; n < corpus.DocLen(d); n++) {
-      double phisum = 0;
-      double oldphi[m.num_topics];
-      for (int k = 0; k < m.num_topics; k++) {
-        oldphi[k] = phi[n][k];
-        phi[n][k] = digamma_gam[k] + m.log_prob_w[k][corpus.Word(d, n)];
-        if (k > 0) {
-          phisum = LogSum(phisum, phi[n][k]);
-        } else {
-          phisum = phi[n][k]; 
-        }
-      }
-      for (int k = 0; k < m.num_topics; k++) {
-        phi[n][k] = exp(phi[n][k] - phisum);
-        gamma[k] = gamma[k] + corpus.Count(d, n) * (phi[n][k] - oldphi[k]);
-        digamma_gam[k] = DiGamma(gamma[k]);
-      }
-    }
-    double likelihood = Likelihood(d, m, phi, gamma);
-    assert(!isnan(likelihood));
-    converged = (likelihood_old - likelihood) / likelihood_old;
-    likelihood_old = likelihood;
-  }
-  return likelihood_old;
-}
- 
-void LDA::RunEM(const Str &type, double** gamma, double** phi) {
-  LdaModel model;
-  NewLdaModel(n_topic_, corpus.num_terms, &model);
-  LdaSuffStats ss;
-  NewLdaSuffStats(model, &ss);
-  CreateSS(type, corpus, model, &ss);
-  LdaMLE(0, ss, &model);
-  model.alpha = initial_alpha_;
-  double converged = 1;
-  double likelihood_old = 0;
-  int i = 0;
-  while (((converged < 0) || (converged > em_converged_) ||
-                          (i <= 2)) && (i++ <= em_max_iter_)) {
-    // LOG(INFO) << i;
-    std::cout << "repeat " << i << std::endl;
-    double likelihood = 0;
-    InitSS(model, 0, &ss);
-    for (int d = 0; d < corpus.Len(); d++) {
-      likelihood += DocEStep(d, model, gamma[d], phi, &ss);
-    }
-    LdaMLE(estimate_alpha_, ss, &model);
-    converged = (likelihood_old - likelihood) / (likelihood_old);
-    if (converged < 0) {
-      var_max_iter_ = var_max_iter_ * 2;
-    }
-    likelihood_old = likelihood;
-  }
-}
-
 double LDA::DocEStep(int d, const LdaModel &m, LdaSuffStats* ss) const {
   VReal gamma;
   VVReal phi;
@@ -235,10 +116,8 @@ void LDA::RunEM(const Str &type, LdaModel* m) {
   double converged = 1;
   double likelihood_old = 0;
   int i = 0;
-  while (((converged < 0) || (converged > em_converged_) ||
-                          (i <= 2)) && (i++ <= em_max_iter_)) {
-    // LOG(INFO) << i;
-    std::cout << "repeat " << i << std::endl;
+  while (i++ <= em_max_iter_) {
+    LOG(INFO) << i;
     double likelihood = 0;
     InitSS(*m, 0, &ss);
     for (int d = 0; d < corpus.Len(); d++) {
@@ -265,5 +144,18 @@ void LDA::Infer(LdaModelC &m, VVReal* ga, VVVReal* phi) const {
 
 void LDA::LoadCorpus(const Str &filename) {
   corpus.LoadData(filename);
+}
+
+void LDA::Gibbs() const {
+  LdaSuffStats ss;
+  int k = 10;
+  int it = 15000;
+  LdaModel model;
+  model.alpha = 0.01;
+  model.beta = 0.0001;
+  GibbsInfer(it, k, corpus, &model);
+  WriteStrToFile(Join(model.theta, " ", "\n"), "gibs_theta");
+  WriteStrToFile(Join(model.phi, " ", "\n"), "gibs_phi");
+  LOG(INFO) << "over";
 }
 } // namespace topic

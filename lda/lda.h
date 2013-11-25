@@ -12,11 +12,11 @@ struct Document {
   Document () : total(0) {}
   int Len() const { return static_cast<int>(words.size());}
 };
+typedef const Document DocumentC;
 
 struct Corpus {
   std::vector<Document> docs;
-  int num_terms;
-
+  int num_terms;  //max index of words
   Corpus () : num_terms(0) {}
   int Len() const { return static_cast<int>(docs.size());}
   int DocLen(int d) const { return static_cast<int>(docs[d].Len());}
@@ -25,15 +25,13 @@ struct Corpus {
   void LoadData(const Str &filename);
   int MaxCorpusLen() const;
 };
+typedef const Corpus CorpusC;
 
-// alpha, beta : hpyerparameter; 
-// log_prob_w : topic-word distribution
-// theta : document-topic distribution
 struct LdaModel {
-  double alpha;
-  double beta;
-  double** log_prob_w;
-  VVReal theta;
+  double alpha;  // hyperparameter
+  double beta;   // hyperparameter
+  double** log_prob_w; // topic-word distribution
+  VVReal theta;  // document-topic distribution
   VVReal phi;
   int num_topics;
   int num_terms;
@@ -43,16 +41,18 @@ struct LdaModel {
 typedef const LdaModel LdaModelC;
 
 struct LdaSuffStats {
-  VVInt ss_phi;
-  VVInt ss_theta; 
-  VInt sum_ss_phi;
-  VInt sum_ss_theta; 
+  VVInt phi;
+  VVInt theta; 
+  VInt sum_phi;
+  VInt sum_theta; 
   double** class_word;
   double* class_total;
   double alpha_suffstats;
   int num_docs;
   LdaSuffStats () : class_word(NULL), class_total(NULL),
                     alpha_suffstats(0), num_docs(0) { }
+  void Init(int m, int k, int v);
 };
+typedef const LdaSuffStats LdaSuffStatsC;
 } // namespace topic
 #endif // LDA_LDA_H

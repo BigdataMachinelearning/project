@@ -15,15 +15,11 @@ class LDA {
   inline void Init(float em_converged, int em_max_iter, int estimate_alpha,
                    int var_max_iter, int var_converged_,
                    double initial_alpha, int n_topic);
-  double DocEStep(int d, const LdaModel &model, double* gamma, double** phi,
-                                                           LdaSuffStats* ss);
   void RunEM(const Str &mode, double** var_gamma, double** phi);
   void CreateSS(const Str &type, const Corpus &c, const LdaModel &m,
                                  LdaSuffStats* ss) const;
-  double Infer(int d, const LdaModel &m, double* gamma, double** phi);
   double Infer(int d, LdaModelC &m, VReal* ga, VVReal* phi) const;
   double Infer(LdaModelC &m, VReal* ga, VVReal* phi) const;
-  double Likelihood(int d, LdaModelC &m, double** phi, double* gamma);
   double Likelihood(int d, LdaModelC &m, VRealC &gamma, VVRealC &phi) const;
   void LoadCorpus(const Str &filename);
   inline int Len() const;
@@ -31,6 +27,7 @@ class LDA {
   void RunEM(const Str &type, LdaModel* m) ;
   void Infer(LdaModelC &m, VVReal* ga, VVVReal* phi) const;
   inline void AddDoc(const Document &doc);
+  void Gibbs() const;
  private:
   void InitVar(int d, const LdaModel &model, VReal* digamma, VReal* gamma,
                                              VVReal* phi) const;
