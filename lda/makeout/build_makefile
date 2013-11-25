@@ -8,6 +8,7 @@ Lib:=\
   -L$(HOME)/google-library/lib
 
 Link:=\
-  -lpthread
+  -lpthread\
+  -lglog
 P:=$(Include) $(Lib) $(Link)
 
