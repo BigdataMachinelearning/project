@@ -16,14 +16,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA
-#include "lda_model.h"
 
-#include <iostream>
+#include "lda/lda_model.h"
+
 #include "base/base_head.h"
 
 namespace topic {
 const int NUM_INIT = 1;
-void LdaMLE(int estimate_alpha, const LdaSuffStats &ss, LdaModel* m) {
+void LdaMLE(int estimate_alpha, LdaSuffStatsC &ss, LdaModel* m) {
   for (int k = 0; k < m->num_topics; k++) {
     for (int w = 0; w < m->num_terms; w++) {
       if (ss.class_word[k][w] > 0) {
@@ -46,7 +46,7 @@ void NewLdaModel(int num_topics, int num_terms, LdaModel* model) {
   Init(num_topics, num_terms, 0.0, model->log_prob_w);
 }
 
-void NewLdaSuffStats(const LdaModel &m, LdaSuffStats* ss) {
+void NewLdaSuffStats(LdaModelC &m, LdaSuffStats* ss) {
   ss->class_total = new double[m.num_topics];
   double init = 0.0;
   Init(m.num_topics, init, ss->class_total);
@@ -54,9 +54,9 @@ void NewLdaSuffStats(const LdaModel &m, LdaSuffStats* ss) {
   Init(m.num_topics, m.num_terms, init, ss->class_word);
 }
 
-void InitSS(const LdaModel &model, double value, LdaSuffStats* ss) {
+void InitSS(LdaModelC &model, double value, LdaSuffStats* ss) {
   for (int k = 0; k < model.num_topics; k++) {
-    //LOG(INFO) << k;
+    // LOG(INFO) << k;
     std::cout << k << std::endl;
     ss->class_total[k] = value;
     for (int w = 0; w < model.num_terms; w++) {
@@ -92,9 +92,9 @@ void CorpusInitSS(const Corpus &c, const LdaModel &m, LdaSuffStats* ss) {
   }
 }
 
-const double  NEWTON_THRESH = 1e-5;
-const int MAX_ALPHA_ITER = 1000;
 double OptAlpha(double ss, int d, int k) {
+  const double  NEWTON_THRESH = 1e-5;
+  const int MAX_ALPHA_ITER = 1000;
   double init_a = 100;
   double log_a = log(init_a);
   int iter = 0;
@@ -113,5 +113,4 @@ double OptAlpha(double ss, int d, int k) {
   } while ((fabs(df) > NEWTON_THRESH) && (iter < MAX_ALPHA_ITER));
   return exp(log_a);
 }
-
-} // namespace topic
+}  // namespace topic

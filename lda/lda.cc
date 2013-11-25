@@ -2,9 +2,9 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #include "lda/lda.h"
 
-#include "base/base_head.h"
 #include <cstdio>
 #include <cstdlib>
+#include "base/base_head.h"
 
 namespace topic {
 void Corpus::LoadData(const Str &filename) {
@@ -58,4 +58,4 @@ void LdaSuffStats::Init(int m, int k, int v) {
     theta[i].resize(k);
   }
 }
-} // namespace topic
+}  // namespace topic

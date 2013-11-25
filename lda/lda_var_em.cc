@@ -115,9 +115,8 @@ void LDA::RunEM(const Str &type, LdaModel* m) {
   m->alpha = initial_alpha_;
   double converged = 1;
   double likelihood_old = 0;
-  int i = 0;
-  while (i++ <= em_max_iter_) {
-    LOG(INFO) << i;
+  for (int i = 0; i < em_max_iter_; i++) {
+    LOG(INFO) << i << " " << em_max_iter_ - i;
     double likelihood = 0;
     InitSS(*m, 0, &ss);
     for (int d = 0; d < corpus.Len(); d++) {
