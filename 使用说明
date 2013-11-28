@@ -1,0 +1,18 @@
+1. 编译：
+每个目录下有一个makefie文件和一个unittest目录，unittest
+是该目录下所有程序的测试程序，在终端输入make 可以编译，
+对于没有安装glog的用户，直接把相应的代码中相应的语句注释掉，
+并修改makeout下build_makefile中的Link选项即可。
+单元测试使用gtest,这个很好用，可以看一下相关文档。
+生成.o文件的语句放在了makeout下的update文件里面。
+makeout下makefile文件包含具体测试程序的依赖关系
+
+2. 运行
+每个目录下有一个run目录，里面放有相当脚本，
+cmd="
+    ./makeout/lda_unittest.o
+    --gtest_filter=LDATest.GibbsTest
+    "
+如上所示，表示运行lda_unittest这个程序，--gtest_filter表示
+具体运行哪个测试单元，如果不写，则运行所有测试单元。
+在当前的目录下，修改makefile可以指示运行具体的脚本
