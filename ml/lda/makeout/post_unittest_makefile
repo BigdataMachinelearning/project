@@ -1,0 +1,5 @@
+$(name)_dep:=\
+  $($(name)_update_dep)\
+  $($(name)_remain_dep)
+$(name)_src:=$(WorkDir)/unittest/$(name).cpp
+$(name)_out:=-o $(name).o
