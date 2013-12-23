@@ -1,0 +1,22 @@
+include makefile.config
+
+rbm.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/rbm.cc $(Include) -Wno-deprecated
+
+rbm_util.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/rbm_util.cc $(Include) -Wno-deprecated
+
+join.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/join.cc $(Include) -Wno-deprecated
+
+base.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/base.cc $(Include) -Wno-deprecated
+
+string_util.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/string_util.cc $(Include) -Wno-deprecated
+
+util.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/ml/util.cc $(Include) -Wno-deprecated
+
+rbm2.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/rbm2.cc $(Include) -Wno-deprecated
