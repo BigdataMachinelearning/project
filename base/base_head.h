@@ -9,7 +9,10 @@
 #include "base/c_util.h"
 #include "base/io_util.h"
 #include "base/join.h"
+#include "base/random.h"
 #include "base/stat.h"
 #include "base/string_util.h"
+#include "base/test.h"
 #include "glog/logging.h"
+#include "gflags/gflags.h"
 #endif // BASE_BASE_HEAH_H_
