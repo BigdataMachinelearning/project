@@ -6,6 +6,10 @@ Str Join(const VStr &vec, const Str &del) {
   return JoinStr(vec.begin(), vec.end(), del);		   
 }
 
+Str Join(const LStr &l, const Str &del) {
+  return JoinStr(l.begin(), l.end(), del);		   
+}
+
 Str Join(const VVStr &vec, const Str &del1, const Str &del2) {
   VStr tmp;
   for (VVStr::size_type i = 0; i < vec.size(); i++) {

@@ -2,10 +2,10 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #ifndef BASE_TYPE_H_
 #define BASE_TYPE_H_ 
-#include <cmath>
 #include <map>
 #include <string>
 #include <vector>
+#include <list>
 
 typedef std::vector<int> VInt;
 typedef const VInt VIntC;
@@ -33,4 +33,5 @@ typedef const VStr VStrC;
 typedef std::vector<VStr> VVStr;
 typedef const VVStr VVStrC;
 
+typedef std::list<Str> LStr;
 #endif // BASE_TYPE_H_ 

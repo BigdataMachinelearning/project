@@ -140,9 +140,6 @@ TEST(BaseTest, RandomTest2) {
   EXPECT_LT(std::abs(p - r[3]), precision);
 }
 
-TEST(BaseTest, Power) {
-}
-
 TEST(InitTest, InitTEST) {
   VReal tmp;
   Init(2, 0.0, &tmp);
@@ -152,20 +149,20 @@ TEST(InitTest, InitTEST) {
   EXPECT_EQ("0 0 \n0 0 \n", Join(tmp2, " ", "\n"));
 }
 
-TEST(BaseTest, SigmoidTest) {
+TEST(Random, SigmoidTest) {
   double a = 0;
   MIntInt m;
   for (int i = 0; i < 1000; i++) {
-    m[SigRand(a)]++;
+    m[SigmoidSample(a)]++;
   }
   EXPECT_LT(500 - m[0], 50);
 }
 
-TEST(BaseTest, RandSampleTest) {
+TEST(Random, Sample1Test) {
   double a = 0;
   MIntInt m;
   for (int i = 0; i < 1000; i++) {
-    m[RandSample(a)]++;
+    m[Sample1(a)]++;
   }
   EXPECT_LT(500 - m[0], 50);
 }
@@ -199,16 +196,6 @@ struct F{
   int size;
 };
 
-TEST(StatTest, TimeTEST) {
-  Time time;
-  time.Start();
-  for (int i = 0; i < 100; i++) {
-    for (int j = 0; j < 100; j++) {
-      VInt a(10000);
-    }
-  }
-  LOG(INFO) << time.GetTime();
-}
 /*
 TEST(IOUtilTest, FIOTEST) {
   int a[2];

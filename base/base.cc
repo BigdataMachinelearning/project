@@ -1,6 +1,7 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/base.h"
+#include "base/random.h"
 
 void Init(int len, double value, VReal* des) {
   VReal tmp(len, value);
@@ -27,19 +28,3 @@ void Cumulate(VReal* des) {
   }
 }
 
-int Random(const VReal &data) {
-  VReal tmp(data);
-  Cumulate(&tmp);
-  double u = (static_cast<double>(random()) / RAND_MAX) * tmp[tmp.size() - 1];
-  for (VReal::size_type i = 0; i < tmp.size(); i++) {
-    if (tmp[i] > u) {
-      return i;
-    }
-  }
-  return static_cast<int>(tmp.size());
-}
-
-int Random(int k) {
-  double u = (static_cast<double>(random()) / RAND_MAX) * k;
-  return std::floor(u);
-}

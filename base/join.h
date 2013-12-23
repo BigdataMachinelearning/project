@@ -16,6 +16,7 @@ inline Str JoinStr(Iter beg, Iter end, StrC &del) {
   return str;
 }
 
+Str Join(const LStr &vec, StrC &del);
 Str Join(VStrC &vec, StrC &del);
 Str Join(VVStrC &vec, StrC &del1, StrC &del2);
 Str Join(VRealC &data, StrC &del);
@@ -38,9 +39,25 @@ inline Str MapToStr(T beg, T end) {
   return Join(vec1, "\n");
 }
 
+template <typename T>
+inline Str JoinValue(T beg, T end) {
+  VStr vec;
+  for (T it = beg; it != end; ++it) {
+    vec.push_back(ToStr(it->second));
+  }
+  return Join(vec, " ");
+}
+
+template <typename T>
+inline Str JoinKey(T beg, T end) {
+  VStr vec;
+  for (T it = beg; it != end; ++it) {
+    vec.push_back(ToStr(it->first));
+  }
+  return Join(vec, " ");
+}
+
 inline Str MapToStr(const MIntInt &src) {
   return MapToStr(src.begin(), src.end());
 }
-
-
 #endif // BASE_JOIN_H_
