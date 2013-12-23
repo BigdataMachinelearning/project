@@ -1,9 +1,0 @@
-dep:=$($(name)_dep)
-out:=$($(name)_out)
-src:=$($(name)_src)
-clean_file:=$($(name)_update_dep) $(name).o tags
-
-include makefile.config
-
-$(name).o:$(dep)
-	$(CC) $(CXXFLAGS2) $(dep) $(src) $(out) $(P) -Wno-deprecated
