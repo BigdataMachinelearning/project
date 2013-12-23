@@ -11,3 +11,5 @@ base.o:
 document.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/ml/document.cc $(Include) -Wno-deprecated
 
+util.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/ml/util.cc $(Include) -Wno-deprecated
