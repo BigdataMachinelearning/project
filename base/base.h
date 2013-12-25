@@ -31,6 +31,8 @@ inline void Append(const VVVReal &src, VReal* des) {
   }
 }
 
+void Sum(const VVReal &src, VReal* des);
+
 class Time {
  public:
   void Start() { beg = clock(); }

@@ -191,6 +191,19 @@ TEST(StatTest, ExpectTEST) {
   EXPECT_LT(std::abs(Expect(v2) - 3), 0.000001);
 }
 
+TEST(BaseTest, SumTEST) {
+  VReal v;
+  v.push_back(1);
+  v.push_back(2);
+  VVReal v2;
+  v2.push_back(v);
+  v2.push_back(v);
+  VReal v3;
+  Sum(v2, &v3);
+  EXPECT_EQ(3, v3[0]);
+  EXPECT_EQ(3, v3[1]);
+}
+
 struct F{
   int* a;
   int size;

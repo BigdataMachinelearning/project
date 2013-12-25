@@ -1,6 +1,9 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/base.h"
+
+#include <algorithm>
+
 #include "base/random.h"
 
 void Init(int len, double value, VReal* des) {
@@ -28,3 +31,9 @@ void Cumulate(VReal* des) {
   }
 }
 
+void Sum(const VVReal &src, VReal* des) {
+  des->resize(src.size());
+  for (size_t i = 0; i < src.size(); i++) {
+    des->at(i) = std::accumulate(src[i].begin(), src[i].end(), 0.0);
+  }
+}
