@@ -24,7 +24,7 @@ int Sample(const VReal &a){
   return a.size();
 }
 
-int SoftmaxSample(const VReal &a, VReal *b) {
+int SoftmaxSample(const VReal &a) {
   VReal e(a.size());
   Softmax(a, &e);
   return Sample(e);

@@ -4,6 +4,7 @@
 
 #include "ml/document.h"
 #include "ml/rbm/rbm_util.h"
+#include "ml/info.h"
 #include "ml/util.h"
 
 namespace ml {
@@ -75,6 +76,23 @@ void SampleH(const Document &doc,const RBM_RepSoftMax &rbm, VReal* h) {
   }
 }
 
+void CD(const Document &doc, const RBM_RepSoftMax &rbm, int step, VInt* v) {
+  VReal h1;
+  SampleH(doc, rbm, &h1);
+  SampleV(doc, h1, rbm, v);
+  VReal h2;
+  VReal tmp;
+  VInt r(v->size());
+  for (int i = 1; i < step; i++) {
+    h2.clear();
+    ExpectH(doc.words, *v, rbm, &h2);
+    SampleV(doc, h2, rbm, v);
+    Add(*v, &r);
+    tmp.push_back(CrossEntropy(r, doc.counts));
+  }
+  LOG(INFO) << Join(tmp, " ");
+}
+
 void RBMLearning(const Corpus &corpus, int itern, RBM_RepSoftMax* rbm) {
   for(int iteration = 0; iteration < itern; ++iteration) {
     for(int i = 0; i < corpus.Len(); ++i) {
@@ -82,17 +100,16 @@ void RBMLearning(const Corpus &corpus, int itern, RBM_RepSoftMax* rbm) {
       SampleH(corpus.docs[i], *rbm, &h1);
       VInt v2(corpus.docs[i].words.size());
       SampleV(corpus.docs[i], h1, *rbm, &v2);
-      // LOG_IF(INFO, i == 0) << i << ":" << Join(corpus.docs[i].counts, " ");
-      // LOG_IF(INFO, i == 0) << i << ":" << Join(v2, " ");
+      LOG_IF(INFO, i == 0) << i << ":" << CrossEntropy(v2, corpus.docs[i].counts);
+      if (i == 0) {
+        CD(corpus.docs[i], *rbm, 1000, &v2);
+      }
       VReal h2;
       ExpectH(corpus.docs[i].words, v2, *rbm, &h2);
-      LOG_IF(INFO, i == 0) << i << ":" << Join(h2, " ");
-      double var = Var(rbm->w);
       Update(corpus.docs[i].words, h1, corpus.docs[i].counts, h2, v2, rbm);
       VReal tmp;
       ::Sum(rbm->w, &tmp);
-      LOG_IF(INFO, i == 0) << Join(tmp, " ") << ":var--" << Var(rbm->w);
-      double var2 = Var(rbm->w);
+      // LOG_IF(INFO, i == 0) << Join(tmp, " ") << ":var--" << Var(rbm->w);
     }
   }
 }

@@ -74,9 +74,9 @@ void App3() {
 } // namespace ml
 
 int main(int argc, char* argv[]) {
- ::google::ParseCommandLineFlags(&argc, &argv, true);
-  ml::App3();
-//  ml::App();
-//  ml::App2();
+  ::google::ParseCommandLineFlags(&argc, &argv, true);
+  // ml::App3();
+  ml::App();
+  ml::App2();
   return  0;
 }

@@ -6,7 +6,7 @@
 namespace ml {
 void Softmax(const VReal &a, VReal *b);
 int Sample(const VReal &a);
-int SoftmaxSample(const VReal &a, VReal *b);
+int SoftmaxSample(const VReal &a);
 double NormalSample();
 
 void RandomInit(int len, VReal* des);
