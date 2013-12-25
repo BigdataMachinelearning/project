@@ -4,10 +4,9 @@
 #define BASE_STL_UTIL_H_
 #include "base/stl_util.h"
 
-inline void Add(const VInt &lhs, const VInt &rhs, VInt* des) {
-  des->resize(lhs.size());
+inline void Add(const VInt &lhs, VInt* des) {
   for (size_t i = 0; i < lhs.size(); i++) {
-    des->at(i) = lhs[i] + rhs[i];
+    des->at(i) += lhs[i];
   }
 }
 #endif // BASE_STL_UTIL
