@@ -13,6 +13,10 @@ inline double Square(double a) {
   return a * a;
 }
 
+inline double Log2(double a) {
+  return log(a) / log(2.0);
+}
+
 void Append(const VReal &src, VReal* des);
 void Append(const VVReal &src, VReal* des);
 void Append(const VVVReal &src, VReal* des);

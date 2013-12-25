@@ -204,6 +204,10 @@ TEST(BaseTest, SumTEST) {
   EXPECT_EQ(3, v3[1]);
 }
 
+TEST(BaseTest, Log2TEST) {
+  EXPECT_DOUBLE_EQ(1, Log2(2.0));
+  EXPECT_DOUBLE_EQ(2, Log2(4.0));
+}
 struct F{
   int* a;
   int size;
