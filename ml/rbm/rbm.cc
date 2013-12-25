@@ -190,4 +190,5 @@ void RBMLearning(const User &train, const User &test, int iter_num,
     // LOG(INFO) << i << " " << Count[0] << " " << Count[1];
   }
 }
+// test 
 }  // namespace ml
