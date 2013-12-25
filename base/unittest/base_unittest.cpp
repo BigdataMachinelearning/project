@@ -208,6 +208,20 @@ TEST(BaseTest, Log2TEST) {
   EXPECT_DOUBLE_EQ(1, Log2(2.0));
   EXPECT_DOUBLE_EQ(2, Log2(4.0));
 }
+
+TEST(StlUtil, AddTEST) {
+  VInt lhs;
+  lhs.push_back(1);
+  lhs.push_back(2);
+  VInt rhs;
+  rhs.push_back(2);
+  rhs.push_back(2);
+  VInt r;
+  Add(lhs, rhs, &r);
+  EXPECT_EQ(3, r[0]);
+  EXPECT_EQ(4, r[1]);
+}
+
 struct F{
   int* a;
   int size;
