@@ -16,3 +16,5 @@ cmd="
 如上所示，表示运行lda_unittest这个程序，--gtest_filter表示
 具体运行哪个测试单元，如果不写，则运行所有测试单元。
 在当前的目录下，修改makefile可以指示运行具体的脚本
+
+test
