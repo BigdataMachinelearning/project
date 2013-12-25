@@ -13,24 +13,9 @@ inline double Square(double a) {
   return a * a;
 }
 
-inline void Append(const VReal &src, VReal* des) {
-  for (size_t i = 0; i < src.size(); i++) {
-    des->push_back(src[i]);
-  }
-}
-
-inline void Append(const VVReal &src, VReal* des) {
-  for (size_t i = 0; i < src.size(); i++) {
-    Append(src[i], des);
-  }
-}
-
-inline void Append(const VVVReal &src, VReal* des) {
-  for (size_t i = 0; i < src.size(); i++) {
-    Append(src[i], des);
-  }
-}
-
+void Append(const VReal &src, VReal* des);
+void Append(const VVReal &src, VReal* des);
+void Append(const VVVReal &src, VReal* des);
 void Sum(const VVReal &src, VReal* des);
 
 class Time {

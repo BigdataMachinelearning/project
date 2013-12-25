@@ -37,3 +37,21 @@ void Sum(const VVReal &src, VReal* des) {
     des->at(i) = std::accumulate(src[i].begin(), src[i].end(), 0.0);
   }
 }
+
+void Append(const VReal &src, VReal* des) {
+  for (size_t i = 0; i < src.size(); i++) {
+    des->push_back(src[i]);
+  }
+}
+
+void Append(const VVReal &src, VReal* des) {
+  for (size_t i = 0; i < src.size(); i++) {
+    Append(src[i], des);
+  }
+}
+
+void Append(const VVVReal &src, VReal* des) {
+  for (size_t i = 0; i < src.size(); i++) {
+    Append(src[i], des);
+  }
+}
