@@ -66,9 +66,9 @@ void App3() {
   Corpus corpus;
   VVInt hidden;
   RBM_RepSoftMax rbm;
-  Str dat = "ap/ap.dat";
+  Str dat = "../../data/ap.dat";
   corpus.LoadData(dat);
-  rbm.Init(20, corpus.num_terms, 1, 0.00000001);
+  rbm.Init(FLAGS_k, corpus.num_terms, 1, 0.000000001);
   RBMLearning(corpus, 100, &rbm);
 }
 } // namespace ml

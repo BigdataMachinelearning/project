@@ -8,6 +8,7 @@ main:
 
 name:=./run/document_unittest.sh
 name:=./run/util_unittest.sh
+name:=./run/info_unittest.sh
 .PHONY:run
 run:
 	$(name)

@@ -32,10 +32,10 @@ include post_app_makefile
 name:=rbm_app
 $(name)_update_dep:=\
   rbm_repsoftmax.o\
+  base.o\
   rbm_util.o
 $(name)_remain_dep:=\
   join.o\
-  base.o\
   string_util.o\
   rbm2.o\
   rbm.o\

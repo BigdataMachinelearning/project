@@ -46,7 +46,8 @@ void SampleV(const Document &doc, const VReal &h, const RBM_RepSoftMax &rbm,
   VReal expect(doc.words.size());
   ExpectV(doc, h, rbm, &expect);
   for (int i = 0; i < doc.total; ++i) {
-    v->at(doc.words[Random(expect)])++;
+    // v->at(doc.words[Random(expect)])++;
+    v->at(Random(expect))++;
   }
 }
 
@@ -79,15 +80,18 @@ void RBMLearning(const Corpus &corpus, int itern, RBM_RepSoftMax* rbm) {
     for(int i = 0; i < corpus.Len(); ++i) {
       VReal h1;
       SampleH(corpus.docs[i], *rbm, &h1);
-      VInt v2(corpus.num_terms);
+      VInt v2(corpus.docs[i].words.size());
       SampleV(corpus.docs[i], h1, *rbm, &v2);
+      // LOG_IF(INFO, i == 0) << i << ":" << Join(corpus.docs[i].counts, " ");
+      // LOG_IF(INFO, i == 0) << i << ":" << Join(v2, " ");
       VReal h2;
       ExpectH(corpus.docs[i].words, v2, *rbm, &h2);
       LOG_IF(INFO, i == 0) << i << ":" << Join(h2, " ");
-      LOG_IF(INFO, i == 42) << i << ":" << Join(h2, " ");
-      LOG_IF(INFO, i == 43) << i << ":" << Join(h2, " ");
       double var = Var(rbm->w);
       Update(corpus.docs[i].words, h1, corpus.docs[i].counts, h2, v2, rbm);
+      VReal tmp;
+      ::Sum(rbm->w, &tmp);
+      LOG_IF(INFO, i == 0) << Join(tmp, " ") << ":var--" << Var(rbm->w);
       double var2 = Var(rbm->w);
     }
   }
