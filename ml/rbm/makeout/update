@@ -20,3 +20,9 @@ util.o:
 
 rbm2.o:
 	$(CC) $(CXXFLAGS) $(WorkDir)/rbm2.cc $(Include) -Wno-deprecated
+
+rbm_repsoftmax.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/rbm_repsoftmax.cc $(Include) -Wno-deprecated
+
+document.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/ml/document.cc $(Include) -Wno-deprecated

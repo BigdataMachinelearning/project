@@ -4,7 +4,9 @@
 #include "ml/rbm/rbm.h"
 #include "ml/rbm/rbm_util.h"
 #include "ml/rbm/rbm2.h"
+#include "ml/rbm/rbm_repsoftmax.h"
 #include "ml/util.h"
+#include "ml/document.h"
 
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
@@ -59,11 +61,22 @@ void App2() {
   RBM rbm(u_v, N, FLAGS_hidden, FLAGS_k);
   rbm.Train(u_v, test_u_v, 2000, FLAGS_eta, FLAGS_bach_size);
 }
+
+void App3() {
+  Corpus corpus;
+  VVInt hidden;
+  RBM_RepSoftMax rbm;
+  Str dat = "ap/ap.dat";
+  corpus.LoadData(dat);
+  rbm.Init(20, corpus.num_terms, 1, 0.00000001);
+  RBMLearning(corpus, 100, &rbm);
+}
 } // namespace ml
 
 int main(int argc, char* argv[]) {
  ::google::ParseCommandLineFlags(&argc, &argv, true);
-  ml::App();
-  ml::App2();
+  ml::App3();
+//  ml::App();
+//  ml::App2();
   return  0;
 }
