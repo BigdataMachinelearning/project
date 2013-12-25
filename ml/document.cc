@@ -69,4 +69,7 @@ void Corpus::NewLatent(VVVReal* z, int k) const {
     }
   }
 }
+
+//
+// void ()
 }  // namespace ml 
