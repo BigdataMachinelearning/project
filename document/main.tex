@@ -1,0 +1,39 @@
+\documentclass[graybox, envcountchap]{styles/svmult}
+\usepackage{CJKutf8}
+\author{lijiankoucoco@163.com}
+\title{Machine Learning}
+\usepackage{amssymb,amsmath,bm}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+\usepackage{textcomp}
+\usepackage{longtable}
+\usepackage{ulem}
+\usepackage{algorithm2e}
+\usepackage{tocbibind}
+\usepackage{makeidx}         % allows index generation
+\renewcommand{\bibname}{References}
+\usepackage[bookmarksnumbered=true,
+            bookmarksopen=true,
+            colorlinks=true,
+            linkcolor=blue,
+            anchorcolor=blue,
+            citecolor=blue
+           ]{hyperref}
+
+\makeindex             % used for the subject index
+
+\begin{document}
+\begin{CJK}{UTF8}{gkai}
+\include{code}
+\include{titlepage}
+\include{preface}
+\tableofcontents
+
+\appendix
+\include{glossary}
+\printindex
+\clearpage
+
+\end{CJK}
+\bibliographystyle{plain}
+\bibliography{mybib}
+\end{document}
