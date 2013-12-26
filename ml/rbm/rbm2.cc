@@ -55,10 +55,7 @@ void RBM::Samplev(const VectorXd &h, const SpVec &t, SpVec *v) {
       a[k] = bv(k, i) +  W[k].col(i).dot(h);
     }
     ml::Softmax(a, &b);
-    // v->insert(i) = ml::Sample(b);
-    int x = ml::Sample(b);
-    v->insert(i) = x;
-    Count2[x]++;
+    v->insert(i) = ml::Sample(b);
   }
 }
 
@@ -78,11 +75,6 @@ void RBM::Sampleh(const SpVec &v, VectorXd *h){
   Expecth(v, h);
   for (int i = 0; i < h->size(); ++i) {
     (*h)[i] = Sample1(h[0][i]);
-    if ((*h)[i] == 1) {
-      Count[0]++; 
-    } else {
-      Count[1]++;
-    }
   }
 }
 
@@ -137,7 +129,6 @@ void RBM::Train(const SpMat &train, const SpMat &test, int niter, double alpha,
     if (i % 50 == 0) {
       nCD++;
     }
-    Count2.clear();
     for (int n = 0; n < train.cols(); n++) {
       Gradient(train.col(n), nCD);
       curr_samples++;
@@ -147,10 +138,6 @@ void RBM::Train(const SpMat &train, const SpMat &test, int niter, double alpha,
         InitGradient();
       }
     }
-    // LOG(INFO) << Var(W) << ":" << Var(dW)
-      //        << "--" << Mean(W) << ":" << Mean(dW);
-    // LOG(INFO) << JoinValue(Count2.begin(), Count2.end());
-    // LOG(INFO) << i << " " << Count[0] << " " << Count[1];
     LOG(INFO) << i << " " << 
               Predict(train, train) << " " << Predict(train, test);
   }

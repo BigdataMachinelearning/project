@@ -8,6 +8,7 @@ main:
 
 name:=./run/rbm_unittest.sh
 name:=./run/rbm_app.sh
+name:=./run/repsoftmax_app.sh
 .PHONY:run
 run:
 	$(name)

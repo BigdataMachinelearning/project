@@ -19,7 +19,8 @@ struct RBM {
   double momentum;
   double eta;
   int bach_size;
-  void Init(int m, int f, int k, double momentum_, double eta_);
+  void Init(int f, int m, int k, int bach, double momentum_, double eta_);
+  // void Init(int m, int f, int k, int bach_size, double momentum_, double eta_);
   void InitZero();
 };
 

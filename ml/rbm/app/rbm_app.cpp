@@ -4,7 +4,7 @@
 #include "ml/rbm/rbm.h"
 #include "ml/rbm/rbm_util.h"
 #include "ml/rbm/rbm2.h"
-#include "ml/rbm/rbm_repsoftmax.h"
+#include "ml/rbm/repsoftmax.h"
 #include "ml/util.h"
 #include "ml/document.h"
 
@@ -27,8 +27,7 @@ namespace ml {
 void InitMovieLen(ml2::RBM* rbm) {
   double momentum = 0.0;
   double eta = FLAGS_eta;
-  rbm->bach_size = FLAGS_bach_size;
-  rbm->Init(FLAGS_hidden, FLAGS_m, FLAGS_k, momentum, eta);
+  rbm->Init(FLAGS_hidden, FLAGS_m, FLAGS_k, FLAGS_bach_size, momentum, eta);
 }
 
 void App() {
@@ -63,19 +62,22 @@ void App2() {
 }
 
 void App3() {
+  if (FLAGS_type != "softmax") {
+    return;
+  }
   Corpus corpus;
   VVInt hidden;
-  RBM_RepSoftMax rbm;
+  RepSoftMax softmax;
   Str dat = "../../data/ap.dat";
   corpus.LoadData(dat);
-  rbm.Init(FLAGS_k, corpus.num_terms, 1, 0.000000001);
-  RBMLearning(corpus, 100, &rbm);
+  softmax.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, 0.001);
+  RBMLearning(corpus, 100, &softmax);
 }
 } // namespace ml
 
 int main(int argc, char* argv[]) {
   ::google::ParseCommandLineFlags(&argc, &argv, true);
-  // ml::App3();
+  ml::App3();
   ml::App();
   ml::App2();
   return  0;

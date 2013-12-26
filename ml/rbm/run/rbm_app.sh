@@ -6,11 +6,12 @@ cmd="
   --eta=0.3
   --bach_size=200
   --m=2000
-  --k=10
+  --k=5
   --hidden=150
   --it_num=10000
   --type=eigen
   --type=stl
+  --type=softmax
   --train_path=data/train_g20.txt
   --test_path=data/test_g20.txt
   "
