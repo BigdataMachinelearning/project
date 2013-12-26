@@ -59,9 +59,11 @@ void ExpectV(const Document &doc, const VReal &h, const RepSoftMax &rep,
   for (size_t k = 0; k < doc.words.size(); ++k) {
     arr[k] = 0;
     for (size_t f = 0; f < h.size(); ++f) {
-      arr[k] += rep.w[f][doc.words[k]] * h[f] * doc.counts[k];
+      arr[k] += rep.w[f][doc.words[k]] * h[f];
+      // * doc.counts[k];
     }
-    arr[k] += rep.b[doc.words[k]] * doc.counts[k];
+    arr[k] += rep.b[doc.words[k]];
+     // * doc.counts[k];
   }
   ml::Softmax(arr, v);
 }
@@ -101,7 +103,10 @@ void SampleH(const Document &doc,const RepSoftMax &rbm, VReal* h) {
 
 void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rbm) {
   int count = 0;
+  VVReal result;
+  result.reserve(corpus.Len());
   for(int iteration = 0; iteration < itern; ++iteration) {
+    result.clear();
     for(int i = 0; i < corpus.Len(); ++i) {
       count++;
       VReal h1;
@@ -112,6 +117,7 @@ void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rbm) {
       ExpectH(corpus.docs[i].words, v2, *rbm, &h2);
       LOG_IF(INFO, i == 0) << Join(h2, " ");
       LOG_IF(INFO, i == 43) << Join(h2, " ");
+      result.push_back(h2);
       Gradient(corpus.docs[i].words, h1, corpus.docs[i].counts, h2, v2, rbm);
       if (count == rbm->bach_size) {
         count = 0;
@@ -122,6 +128,7 @@ void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rbm) {
       ::Sum(rbm->w, &tmp);
       // LOG_IF(INFO, i == 0) << Join(tmp, " ") << ":var--" << Var(rbm->w);
     }
+    WriteStrToFile(Join(result, " ", "\n"), "result.txt");
   }
 }
 

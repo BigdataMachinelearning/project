@@ -70,7 +70,7 @@ void App3() {
   RepSoftMax softmax;
   Str dat = "../../data/ap.dat";
   corpus.LoadData(dat);
-  softmax.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, 0.001);
+  softmax.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
   RBMLearning(corpus, 100, &softmax);
 }
 } // namespace ml
