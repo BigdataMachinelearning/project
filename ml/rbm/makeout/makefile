@@ -19,13 +19,13 @@ include post_unittest_makefile
 name:=rbm_app
 $(name)_update_dep:=\
   repsoftmax.o\
-  rbm2.o\
-  rbm.o\
+  util.o\
   rbm_util.o
 $(name)_remain_dep:=\
   join.o\
+  rbm2.o\
+  rbm.o\
   string_util.o\
-  util.o\
   document.o\
   base.o\
   $(GTestDir)/gtest-all.o
