@@ -113,4 +113,34 @@ double Var(const VVVReal &v) {
 double Sum(const VReal &v) {
   return std::accumulate(v.begin(), v.end(), 0.0);
 }
+
+double Sum(const VVReal &v) {
+  double sum = 0.0;
+  for (size_t i = 0; i < v.size(); i++) {
+    sum += Sum(v[i]);
+  }
+  return sum;
+}
+
+double Sum(const VVVReal &v) {
+  double sum = 0.0;
+  for (size_t i = 0; i < v.size(); i++) {
+    sum += Sum(v[i]);
+  }
+  return sum;
+}
+
+void RandomOrder(int len, int random_num, VInt* des) {
+  des->resize(len);
+  for (int i = 0; i < len; i++) {
+    des->at(i) = i;
+  }
+  for (int i = 0; i < random_num; i++) {
+    int l = random() % len;
+    int r = random() % len;
+    int t = des->at(l);
+    des->at(l) = des->at(r);
+    des->at(r) = t;
+  }
+}
 } // namespace ml

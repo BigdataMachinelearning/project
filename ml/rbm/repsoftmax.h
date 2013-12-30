@@ -19,6 +19,8 @@ struct RepSoftMax {
   void Init(int f, int k, int bach_size_, double momentum_, double eta_);
   void InitZero();
 };
+
+void RBMLearning2(const Corpus &corpus, int itern, RepSoftMax* rep);
 void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rbm);
 }  // namespace ml
 #endif // ML_RBM_REPSOFTMAX_H_

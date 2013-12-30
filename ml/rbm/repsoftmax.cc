@@ -27,7 +27,7 @@ void RepSoftMax::InitZero() {
   ::Init(c.size(), 0.0, &dc);
 }
 
-void Gradient(int len, const VReal &h1, const VInt &v1,
+void Gradient2(int len, const VReal &h1, const VInt &v1,
               const VReal &h2, const VInt &v2, RepSoftMax* rep) {
   for (size_t f = 0; f < h1.size(); ++f) {
     rep->dc[f] += len * (h1[f] -  h2[f]);
@@ -40,7 +40,6 @@ void Gradient(int len, const VReal &h1, const VInt &v1,
   }
 }
 
-/*
 void Gradient(int len, const VInt &index, const VReal &h1, const VInt &v1,
               const VReal &h2, const VInt &v2, RepSoftMax* rep) {
   for (size_t f = 0; f < h1.size(); ++f) {
@@ -53,7 +52,6 @@ void Gradient(int len, const VInt &index, const VReal &h1, const VInt &v1,
     rep->db[index[m]] += v1[m] - v2[m];
   }
 }
-*/
 
 void Update(RepSoftMax* rep) {
   double eta = rep->eta / rep->bach_size;
@@ -68,11 +66,9 @@ void Update(RepSoftMax* rep) {
   }
 }
 
-/*
 void ExpectV(const Document &doc, const VReal &h, const RepSoftMax &rep,
                                                         VReal* v) {
   VReal arr(v->size());
-  LOG(INFO) << arr.size();
   for (size_t k = 0; k < doc.words.size(); ++k) {
     arr[k] = 0;
     for (size_t f = 0; f < h.size(); ++f) {
@@ -82,9 +78,8 @@ void ExpectV(const Document &doc, const VReal &h, const RepSoftMax &rep,
   }
   ml::Softmax(arr, v);
 }
-*/
 
-void ExpectV(const VReal &h, const RepSoftMax &rep, VReal* v) {
+void ExpectV2(const VReal &h, const RepSoftMax &rep, VReal* v) {
   VReal arr(rep.w[0].size());
   for (size_t k = 0; k < rep.w[0].size(); ++k) {
     arr[k] = 0;
@@ -96,7 +91,6 @@ void ExpectV(const VReal &h, const RepSoftMax &rep, VReal* v) {
   ml::Softmax(arr, v);
 }
 
-/*
 void SampleV(const Document &doc, const VReal &h, const RepSoftMax &rbm,
                                                         VInt* v) {
   VReal expect(doc.words.size());
@@ -105,10 +99,10 @@ void SampleV(const Document &doc, const VReal &h, const RepSoftMax &rbm,
     v->at(Random(expect))++;
   }
 }
-*/
-void SampleV(int len, const VReal &h, const RepSoftMax &rep, VInt* v) {
+
+void SampleV2(int len, const VReal &h, const RepSoftMax &rep, VInt* v) {
   VReal expect(rep.w[0].size());
-  ExpectV(h, rep, &expect);
+  ExpectV2(h, rep, &expect);
   for (int i = 0; i < len; ++i) {
     v->at(Random(expect))++;
   }
@@ -148,8 +142,8 @@ void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rep) {
   int count = 0;
   VVReal result;
   result.reserve(corpus.Len());
-  Init(2, 4, 0.1, &(rep->w));
-  rep->w[0][2] = -0.5;
+  // Init(2, 4, 0.1, &(rep->w));
+  // rep->w[0][2] = -0.5;
   for(int k = 0; k < itern; ++k) {
     result.clear();
     for(int i = 0; i < corpus.Len(); ++i) {
@@ -160,20 +154,17 @@ void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rep) {
       SampleH(corpus.docs[i], *rep, &h1);
       // ExpectH(corpus.docs[i], *rep, &h1);
       VInt v2(rep->w[0].size());
-      SampleV(corpus.docs[i].total, h1, *rep, &v2);
+      SampleV(corpus.docs[i], h1, *rep, &v2);
       VReal h2;
       ExpectH(corpus.docs[i].total, corpus.docs[i].words, v2, *rep, &h2);
       // LOG_IF(INFO, i == 0) << Join(h2, " ");
       // LOG_IF(INFO, i == 43) << Join(h2, " ");
       result.push_back(h2);
-      VInt tmp2(v2.size());
-      CreateTmp(corpus.docs[i], &tmp2);
-      LOG(INFO) << "h1:" << Join(h1, " ");
-      LOG(INFO) << "v1:" << Join(tmp2, " ");
-      LOG(INFO) << "h2:" << Join(h2, " ");
-      LOG(INFO) << "v2:" << Join(v2, " ");
-      Gradient(corpus.docs[i].total, h1, tmp2, h2, v2, rep);
-      LOG(INFO) << i << ":" << Join(rep->dw, " ", "\n");
+      // VInt tmp2(v2.size());
+      // CreateTmp(corpus.docs[i], &tmp2);
+      // Gradient(corpus.docs[i].total, h1, tmp2, h2, v2, rep);
+      Gradient(corpus.docs[i].total, corpus.docs[i].words, h1,
+         corpus.docs[i].counts,  h2, v2, rep);
       if (count == rep->bach_size) {
         count = 0;
         Update(rep);
@@ -181,9 +172,42 @@ void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rep) {
       }
       VReal tmp;
       ::Sum(rep->w, &tmp);
-      // LOG_IF(INFO, i % 500 == 0) << Join(tmp, " ") << ":var--" << Var(rbm->w)
-        //    << ":Mean-" << Mean(rbm->w) << ":Sum-" << Sum(rbm->w);
-      // LOG_IF(INFO, i == 0) << "sum:" << Sum(rbm->w) << "mean:" << Mean(rbm->w);
+      LOG_IF(INFO, i % 500 == 0)<< k << ":" << Join(tmp, " ") << ":var--" << Var(rep->w)
+            << ":Mean-" << Mean(rep->w) << ":Sum-" << Sum(rep->w);
+       LOG_IF(INFO, i == 0) << "sum:" << Sum(rep->w) << "mean:" << Mean(rep->w);
+    }
+    WriteStrToFile(Join(result, " ", "\n"), "result.txt");
+  }
+}
+
+void RBMLearning2(const Corpus &corpus, int itern, RepSoftMax* rep) {
+  int count = 0;
+  VVReal result;
+  result.reserve(corpus.Len());
+  for(int k = 0; k < itern; ++k) {
+    result.clear();
+    for(int i = 0; i < corpus.Len(); ++i) {
+      LOG(INFO) << i;
+      count++;
+      VReal h1;
+      SampleH(corpus.docs[i], *rep, &h1);
+      VInt v2(rep->w[0].size());
+      SampleV2(corpus.docs[i].total, h1, *rep, &v2);
+      VReal h2;
+      ExpectH(corpus.docs[i].total, corpus.docs[i].words, v2, *rep, &h2);
+      result.push_back(h2);
+      VInt tmp2(v2.size());
+      CreateTmp(corpus.docs[i], &tmp2);
+      Gradient2(corpus.docs[i].total, h1, tmp2, h2, v2, rep);
+      if (count == rep->bach_size) {
+        count = 0;
+        Update(rep);
+        rep->InitZero();
+      }
+      VReal tmp;
+      ::Sum(rep->w, &tmp);
+      LOG_IF(INFO, i % 500 == 0)<< k << ":" << Join(tmp, " ") << ":var--" <<
+            Var(rep->w) << ":Mean-" << Mean(rep->w) << ":Sum-" << Sum(rep->w);
     }
     WriteStrToFile(Join(result, " ", "\n"), "result.txt");
   }

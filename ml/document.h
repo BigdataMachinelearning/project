@@ -21,10 +21,13 @@ struct Corpus {
   Corpus() : num_terms(0) {}
   int Len() const { return static_cast<int>(docs.size());}
   int DocLen(int d) const { return static_cast<int>(docs[d].Len());}
+  void DocLen(VInt* v) const;
   int Word(int d, int n) const { return docs[d].words[n];}
   int Count(int d, int n) const { return docs[d].counts[n];}
   void LoadData(const Str &filename);
   int MaxCorpusLen() const;
+  void RandomOrder();
+
   void NewLatent(VVInt* z) const;
   void NewLatent(VVReal* z) const;
   void NewLatent(VVVReal* z, int k) const;

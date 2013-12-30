@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include "base/base_head.h"
+#include "ml/util.h"
 
 namespace ml {
 void Corpus::LoadData(const Str &filename) {
@@ -67,6 +68,23 @@ void Corpus::NewLatent(VVVReal* z, int k) const {
     for (int j = 0; j < this->DocLen(i); j++) {
       z->at(i).at(j).resize(k);
     }
+  }
+}
+
+void Corpus::RandomOrder() {
+  VInt order;
+  ml::RandomOrder(docs.size(), docs.size() * 100, &order);
+  VDocument v(docs.size());
+  for (size_t i = 0; i < docs.size(); ++i) {
+    v[i] = docs[order[i]];
+  }
+  docs.swap(v);
+}
+
+void Corpus::DocLen(VInt* v) const {
+  v->resize(Len());
+  for (int i = 0; i < Len(); i++) {
+    v->at(i) = DocLen(i);
   }
 }
 }  // namespace ml 

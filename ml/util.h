@@ -13,11 +13,16 @@ void RandomInit(int len, VReal* des);
 void RandomInit(int row, int col, VVReal* des);
 void RandomInit(int len1, int len2, int len3, VVVReal* des);
 
+void RandomOrder(int len, int random_num, VInt* des);
+
 double Sum(const VReal &v);
-double Mean(const VReal &v);
+double Sum(const VVReal &v);
+double Sum(const VVVReal &v);
+
 double Var(const VReal &v);
 double Var(const VVReal &v);
 double Var(const VVVReal &v);
+
 double Mean(const VReal &v);
 double Mean(const VVReal &v);
 double Mean(const VVVReal &v);

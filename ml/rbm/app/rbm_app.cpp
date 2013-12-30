@@ -18,6 +18,7 @@ DEFINE_int32(k, 5, "class size");
 DEFINE_int32(m, 2000, "visual size");
 DEFINE_int32(hidden, 100, "hidden feature size");
 DEFINE_int32(it_num, 1000, "iter number");
+DEFINE_int32(algorithm_type, 1, "iter number");
 
 DEFINE_string(type, "softmax", "");
 DEFINE_string(train_path, "", "");
@@ -69,11 +70,15 @@ void App3() {
   VVInt hidden;
   RepSoftMax softmax;
   // Str dat = "../../data/ap.dat";
-  Str dat = "test";
+  Str dat = FLAGS_train_path;
   corpus.LoadData(dat);
-  // corpus.RandomOrder();
+  corpus.RandomOrder();
   softmax.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
-  RBMLearning(corpus, FLAGS_it_num, &softmax);
+  if (FLAGS_algorithm_type == 1) {
+    RBMLearning(corpus, FLAGS_it_num, &softmax);
+  } else {
+    RBMLearning2(corpus, FLAGS_it_num, &softmax);
+  }
 }
 } // namespace ml
 

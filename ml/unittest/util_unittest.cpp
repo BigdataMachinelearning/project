@@ -30,6 +30,7 @@ TEST(Util, SoftMaxTest) {
   tmp2.resize(tmp.size());
   Softmax(tmp, &tmp2);
   LOG(INFO) << Join(tmp2, " ");
+  LOG(INFO) << std::accumulate(tmp2.begin(), tmp2.end(), 0.0);
 }
 
 TEST(Util, MeanTest) {
@@ -67,6 +68,41 @@ TEST(Util, NormalSampleTest) {
   RandomInit(100, 100, 100, &tmp2);
   EXPECT_LT(std::abs(0.0 - Mean(tmp2)), 0.00001);
   EXPECT_LT(std::abs(0.0001 - Var(tmp2)), 0.00001);
+  int count = 0;
+  int c2 = 0;
+  for (int i = 0; i < 1000000; i++) {
+    if (NormalSample() > 0) {
+      count++;
+    } else {
+      c2++;
+    }
+  }
+  LOG(INFO) << count;
+  LOG(INFO) << c2;
+}
+
+TEST(Util, SumTest) {
+  VVReal tmp;
+  Init(2, 2, 1.0, &tmp);
+  EXPECT_DOUBLE_EQ(4, Sum(tmp));
+  VVVReal tmp2;
+  Init(2, 2, 2, 2.0, &tmp2);
+  EXPECT_DOUBLE_EQ(16, Sum(tmp2));
+}
+
+TEST(Util, RandomOrderTest) {
+  VInt tmp;
+  RandomOrder(100, 1000, &tmp);
+  SInt dic;
+  ToSet(tmp, &dic);
+  EXPECT_EQ(100, dic.size());
+  int c = 0;
+  for (size_t i = 0; i < tmp.size(); i++) {
+    if (tmp[i] == i) {
+      c++;
+    }
+  }
+  EXPECT_LT(c, 3);
 }
 } // namespace ml 
 
