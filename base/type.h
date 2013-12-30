@@ -3,6 +3,7 @@
 #ifndef BASE_TYPE_H_
 #define BASE_TYPE_H_ 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 #include <list>
@@ -34,4 +35,6 @@ typedef std::vector<VStr> VVStr;
 typedef const VVStr VVStrC;
 
 typedef std::list<Str> LStr;
+
+typedef std::set<int> SInt;
 #endif // BASE_TYPE_H_ 

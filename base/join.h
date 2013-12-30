@@ -22,7 +22,10 @@ Str Join(VVStrC &vec, StrC &del1, StrC &del2);
 Str Join(VRealC &data, StrC &del);
 Str Join(VVRealC &data, StrC &del, StrC &del2);
 Str Join(VVVRealC &data, StrC &del1, StrC &del2, StrC &del3);
+
 Str Join(VIntC &vec, StrC &del);
+Str Join(const SInt &s, StrC &del);
+
 Str Join(VVIntC &data, StrC &del1, StrC &del2);
 Str Join(double* str, int len1);
 Str Join(double** str, int len1, int len2);

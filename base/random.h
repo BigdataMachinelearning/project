@@ -17,7 +17,6 @@ inline double Sigmoid(double a) {
 
 inline int SigmoidSample(double a) {
   return Sample1(Sigmoid(a));
-  //Random1() < Sigmoid(a) ? 1 : 0;
 }
 
 inline int Random(const VReal &data) {

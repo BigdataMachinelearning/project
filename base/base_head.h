@@ -11,6 +11,8 @@
 #include "base/join.h"
 #include "base/random.h"
 #include "base/stat.h"
+#include "base/stl_util.h"
+#include "base/string_util.h"
 #include "base/string_util.h"
 #include "base/test.h"
 #include "glog/logging.h"

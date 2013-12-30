@@ -2,6 +2,8 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/join.h"
 
+#include "base/string_util.h"
+
 Str Join(const VStr &vec, const Str &del) {
   return JoinStr(vec.begin(), vec.end(), del);		   
 }
@@ -22,12 +24,16 @@ template <typename It>
 Str Join(It beg, It end, StrC &del) {
   VStr tmp;
   for (It it = beg; it != end; ++it) {
-    tmp.push_back(ToStr(*it));
+    tmp.push_back(ToStr(*it, 5));
   }
   return Join(tmp, del);
 }
 
 Str Join(const VInt &data, const Str &del) {
+  return Join(data.begin(), data.end(), del);
+}
+
+Str Join(const SInt &data, StrC &del) {
   return Join(data.begin(), data.end(), del);
 }
 
@@ -74,4 +80,3 @@ Str Join(const VVVReal &data, StrC &del1, StrC &del2, StrC &del3) {
   }
   return Join(tmp, "\n");
 }
-

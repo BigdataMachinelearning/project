@@ -26,6 +26,16 @@ inline Str ToStr(NumType num) {
   return str;
 }
 
+template <typename NumType>
+inline Str ToStr(NumType num, int precision) {
+  std::stringstream stream;
+  stream.precision(precision);
+  stream << num;
+  Str str;
+  stream >> str;
+  return str;
+}
+
 int StrToInt(const Str &str);
 double StrToReal(const Str &str);
 #endif  // BASE_STRING_UTIL_H_

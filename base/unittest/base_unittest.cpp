@@ -204,6 +204,30 @@ TEST(BaseTest, SumTEST) {
   EXPECT_EQ(3, v3[1]);
 }
 
+TEST(StlUtil, ToSetTEST) {
+  VInt v;
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(2);
+  v.push_back(3);
+  SInt s;
+  ToSet(v, &s);
+  EXPECT_EQ(3, s.size());
+  EXPECT_EQ("1 2 3 ", Join(s, " "));
+}
+
+TEST(StlUtil, DiffNumTEST) {
+  VInt v;
+  v.push_back(1);
+  v.push_back(2);
+  VInt v2;
+  v2.push_back(1);
+  v2.push_back(2);
+  EXPECT_EQ(0, DiffNum(v, v2));
+  v.push_back(2);
+  v2.push_back(1);
+  EXPECT_EQ(1, DiffNum(v, v2));
+}
 struct F{
   int* a;
   int size;
