@@ -73,7 +73,7 @@ void App3() {
   // Str dat = "../../data/ap.dat";
   Str dat = FLAGS_train_path;
   corpus.LoadData(dat);
-  corpus.RandomOrder();
+  // corpus.RandomOrder();
   softmax.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
   if (FLAGS_algorithm_type == 1) {
     RBMLearning(corpus, FLAGS_it_num, &softmax);
