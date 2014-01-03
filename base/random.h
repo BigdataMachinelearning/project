@@ -35,4 +35,10 @@ inline int Random(int k) {
   double u = (static_cast<double>(random()) / RAND_MAX) * k;
   return std::floor(u);
 }
+
+inline void UniformSample(int len, VInt* v) {
+  for(int i = 0; i < len; ++i) {
+    (*v)[random() % v->size()]++;
+  }
+}
 #endif // BASE_RANDOM_H_

@@ -228,6 +228,16 @@ TEST(StlUtil, DiffNumTEST) {
   v2.push_back(1);
   EXPECT_EQ(1, DiffNum(v, v2));
 }
+
+TEST(Random, UniformSampleTEST) {
+  VInt v(3);
+  int len = 3000;
+  UniformSample(len, &v);
+  EXPECT_LT(std::abs(v[0] - 1000), 100);
+  EXPECT_LT(std::abs(v[1] - 1000), 100);
+  EXPECT_LT(std::abs(v[2] - 1000), 100);
+}
+
 struct F{
   int* a;
   int size;
