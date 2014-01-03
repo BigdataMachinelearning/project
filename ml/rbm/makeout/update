@@ -21,6 +21,9 @@ util.o:
 rbm2.o:
 	$(CC) $(CXXFLAGS) $(WorkDir)/rbm2.cc $(Include) -Wno-deprecated
 
+ais.o:
+	$(CC) $(CXXFLAGS) $(WorkDir)/ais.cc $(Include) -Wno-deprecated
+
 repsoftmax.o:
 	$(CC) $(CXXFLAGS) $(WorkDir)/repsoftmax.cc $(Include) -Wno-deprecated
 

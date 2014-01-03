@@ -1,6 +1,7 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/base_head.h"
+#include "ml/rbm/ais.h"
 #include "ml/rbm/rbm.h"
 #include "ml/rbm/rbm_util.h"
 #include "ml/rbm/rbm2.h"
@@ -79,6 +80,12 @@ void App3() {
   } else {
     RBMLearning2(corpus, FLAGS_it_num, &softmax);
   }
+  int run = 10;
+  VReal beta(10);
+  for (size_t i = 0; i < beta.size(); i++) {
+    beta[i] = 0.1 * i;
+  }
+  AISEstimate(run, beta, softmax);
 }
 } // namespace ml
 

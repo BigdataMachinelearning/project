@@ -20,6 +20,7 @@ name:=rbm_app
 $(name)_update_dep:=\
   repsoftmax.o\
   util.o\
+  ais.o\
   rbm_util.o
 $(name)_remain_dep:=\
   join.o\

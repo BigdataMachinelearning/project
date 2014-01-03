@@ -3,10 +3,10 @@ Lib="$HOME/google-library/lib"
 export LD_LIBRARY_PATH="$Lib:LD_LIBRARY_PATH"
 cmd="
   ./makeout/rbm_app.o
-  --eta=0.000001
+  --eta=0.0000001
   --bach_size=100
   --k=50
-  --it_num=2000
+  --it_num=5
   --type=eigen
   --type=stl
   --type=softmax
