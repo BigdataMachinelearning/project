@@ -18,10 +18,25 @@ TEST(Document, ReadDataTest) {
 }
 
 TEST(Document, LoadDataTest) {
-  Str data = "rbm/test";
+  Str data = "data/document_demo";
   Corpus c;
   c.LoadData(data);
-  LOG(INFO) << c.Len();
+  EXPECT_EQ(6,  c.Len());
+  EXPECT_EQ(4,  c.DocLen(0));
+  EXPECT_EQ(10,  c.Count(0, 0));
+  EXPECT_EQ(4,  c.TermNum());
+}
+
+TEST(Document, SplitDataTest) {
+  Str data = "data/document_demo";
+  Corpus c;
+  c.LoadData(data);
+  Corpus train;
+  Corpus test;
+  double value = 0.5;
+  SplitData(c, 0.5, &train, &test);
+  LOG(INFO) << train.Len();
+  LOG(INFO) << test.Len();
 }
 
 TEST(Document, RandomOrderTest) {

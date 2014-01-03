@@ -87,4 +87,17 @@ void Corpus::DocLen(VInt* v) const {
     v->at(i) = DocLen(i);
   }
 }
+
+void SplitData(const Corpus &c, double value, Corpus* train, Corpus* test) {
+  train->num_terms = c.num_terms;
+  train->docs.reserve(c.Len());
+  test->docs.reserve(c.Len());
+  for (int i = 0; i < c.Len(); i++) {
+    if(Random1() < value) {
+      train->docs.push_back(c.docs[i]);
+    } else {
+      test->docs.push_back(c.docs[i]);
+    }
+  }
+}
 }  // namespace ml 
