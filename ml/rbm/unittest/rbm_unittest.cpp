@@ -1,15 +1,18 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/base_head.h"
+#include "ml/rbm/ais.h"
 #include "ml/rbm/rbm.h"
 #include "ml/rbm/rbm_util.h"
 #include "ml/util.h"
 #include "ml/rbm/rbm2.h"
+#include "ml/rbm/repsoftmax.h"
 #include "gtest/gtest.h"
 
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 namespace ml {
+/*
 TEST(RBMTest, BaiduLoadTest) {
   Str name = "data/baidu_format.txt";
   User user;
@@ -29,7 +32,8 @@ void Init(ml2::RBM* rbm) {
   int k = 6;
   double momentum = 0.0;
   double eta = 0.00001;
-  rbm->Init(f, m, k, momentum, eta);
+  int bach_size = 10;
+  rbm->Init(f, m, k, bach_size, momentum, eta);
 }
 
 TEST(RBMTest, BaiduTest) {
@@ -39,7 +43,7 @@ TEST(RBMTest, BaiduTest) {
   User train;
   User test;
   LoadBaidu(name, 0.8, &train, &test);
-  RBMLearning(train, test, 200, &rbm);
+  ml2::RBMLearning(train, test, 200, &rbm);
   RBMTest(train, test, rbm);
 }
 
@@ -49,8 +53,8 @@ void InitMovieLen(ml2::RBM* rbm) {
   int k = 6;
   double momentum = 0.0;
   double eta = 0.002;
-  rbm->bach_size = 100;
-  rbm->Init(f, m, k, momentum, eta);
+  int bach_size = 100;
+  rbm->Init(f, m, k, bach_size, momentum, eta);
 }
 
 void LoadMovieLen(User* train, User* test) {
@@ -78,7 +82,7 @@ TEST(RBMTest, MovieLenTest) {
   LoadMovieLen(&train, &test);
   ml2::RBM rbm;
   InitMovieLen(&rbm);
-  RBMLearning(train, test, 2000, rbm.bach_size, &rbm);
+  ml2::RBMLearning(train, test, 2000, rbm.bach_size, &rbm);
   // RBMTest(train, test, rbm);
 }
 
@@ -103,6 +107,36 @@ TEST(EigenRBMTest, MovieLenTest) {
   RBM rbm(u_v, N, N_HIDDEN, N_SOFTMAX);
   rbm.Train(u_v, test_u_v, 2000, 0.1, 100);
 }
+*/
+
+TEST(Ais, UniformSampleTest) {
+  Corpus c;
+  Str dat = "../data/document_demo";
+  c.LoadData(dat);
+  VInt v(c.TermNum());
+  UniformSample(c.docs[0], &v);
+  LOG(INFO) << Join(v, " ");
+}
+
+TEST(Ais, AisTest) {
+  Corpus corpus;
+  Str dat = "../data/document_demo";
+  corpus.LoadData(dat);
+  int bach_size = 2;
+  double eta = 0.0001;
+  int k = 2;
+  int it_num = 2000;
+  RepSoftMax rep;
+  rep.Init(k, corpus.num_terms, bach_size, 1, eta);
+  RBMLearning(corpus, it_num, &rep);
+  int run = 10;
+  VReal beta(10);
+  for (size_t i = 0; i < beta.size(); i++) {
+    beta[i] = 0.1 * i;
+  }
+  LOG(INFO) << Probability(corpus.docs[0], run, beta, rep);
+}
+
 } // namespace ml
 
 int main(int argc, char* argv[]) {

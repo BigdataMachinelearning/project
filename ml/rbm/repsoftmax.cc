@@ -125,11 +125,16 @@ void ExpectH(const Document &doc, const RepSoftMax &rbm, VReal* h) {
   ExpectH(doc.total, doc.words, doc.counts, rbm, h);
 }
 
-void SampleH(const Document &doc,const RepSoftMax &rbm, VReal* h) {
-  ExpectH(doc, rbm, h);	
+void SampleH(int len, const VInt &words, const VInt &counts,
+                      const RepSoftMax &rbm, VReal* h) {
+  ExpectH(len, words, counts, rbm, h);
   for (size_t i = 0; i < h->size(); i++) {
     (*h)[i] = Sample1((*h)[i]);
   }
+}
+ 
+void SampleH(const Document &doc,const RepSoftMax &rbm, VReal* h) {
+  SampleH(doc.total, doc.words, doc.counts, rbm, h);
 }
 
 void CreateTmp(const Document &doc, VInt* v) {
@@ -211,6 +216,41 @@ void RBMLearning2(const Corpus &corpus, int itern, RepSoftMax* rep) {
     }
     WriteStrToFile(Join(result, " ", "\n"), "result.txt");
   }
+}
+
+void RepSoftmaxTest(const RepSoftMax &rbm, const Corpus &corpus, 
+                                           Real partition_fc) {
+  VReal PVHs;
+  PVHs.reserve(corpus.Len());
+  for (int i = 0; i < corpus.Len(); ++i) {
+    VReal h1;
+    SampleH(corpus.docs[i], rbm, &h1);
+    const VInt &words = corpus.docs[i].words;
+    const VInt &counts = corpus.docs[i].counts;
+    Real D = std::accumulate(counts.begin(), counts.end(), 0.0);
+
+    Real vbias = 0.0;
+    for(size_t k = 0; k < words.size(); ++k) {
+      vbias += rbm.b[words[k]] * counts[k];
+    }
+
+    Real hbias = 0.0;
+    for(size_t h = 0; h < h1.size(); ++h) {
+      hbias += rbm.c[h] * h1[h];
+    }
+    hbias *= D;
+
+    Real fvweight = 0.0;
+    for(size_t f = 0; f < h1.size(); ++f) {
+      for( size_t k = 0; k < words.size(); ++k) {
+        fvweight += rbm.w[f][words[k]] * h1[f] * counts[k];
+      }
+    }
+
+    Real Pvh = exp(-1 * (fvweight + vbias + hbias)) / partition_fc; 
+    PVHs.push_back(Pvh);
+  }
+  WriteStrToFile(Join(PVHs,"\n"), "test.txt");
 }
 
 /*

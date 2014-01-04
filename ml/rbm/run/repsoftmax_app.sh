@@ -4,14 +4,15 @@ export LD_LIBRARY_PATH="$Lib:LD_LIBRARY_PATH"
 cmd="
   ./makeout/rbm_app.o
   --eta=0.001
-  --bach_size=2
-  --k=2
-  --it_num=2000
+  --eta=0.01
+  --bach_size=200
+  --k=10
+  --it_num=5
   --type=eigen
   --type=stl
   --type=softmax
   --train_path=../../data/ap.dat
-  --train_path=test
+  --train_path=../data/document_demo
   --algorithm_type=1
   "
 gdb="

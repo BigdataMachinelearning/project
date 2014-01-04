@@ -22,5 +22,10 @@ struct RepSoftMax {
 
 void RBMLearning2(const Corpus &corpus, int itern, RepSoftMax* rep);
 void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rbm);
+void SampleV(const Document &doc, const VReal &h, const RepSoftMax &rbm,
+                                                        VInt* v);
+void SampleH(const Document &doc,const RepSoftMax &rbm, VReal* h);
+void SampleH(int len, const VInt &words, const VInt &counts,
+                      const RepSoftMax &rbm, VReal* h);
 }  // namespace ml
 #endif // ML_RBM_REPSOFTMAX_H_

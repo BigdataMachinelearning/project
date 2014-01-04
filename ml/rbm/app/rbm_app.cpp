@@ -70,7 +70,6 @@ void App3() {
   Corpus corpus;
   VVInt hidden;
   RepSoftMax softmax;
-  // Str dat = "../../data/ap.dat";
   Str dat = FLAGS_train_path;
   corpus.LoadData(dat);
   // corpus.RandomOrder();
@@ -85,7 +84,7 @@ void App3() {
   for (size_t i = 0; i < beta.size(); i++) {
     beta[i] = 0.1 * i;
   }
-  AISEstimate(run, beta, softmax);
+  LOG(INFO) << Probability(corpus.docs[0], run, beta, softmax);
 }
 } // namespace ml
 

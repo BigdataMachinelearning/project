@@ -12,8 +12,6 @@ void RBM::Init(int f, int m, int k, int bach, double momentum_, double eta_) {
   momentum = momentum_;
   eta = eta_;
   bach_size = bach;
-  LOG(INFO) << ml::Var(w1);
-  LOG(INFO) << ml::Mean(w1);
 }
 
 void RBM::InitZero() {
@@ -131,4 +129,4 @@ void RBMLearning(const User &train, const User &test, int iter_num,
         << " " << ml::RBMTest(train, train, *rbm) << " " << time.GetTime();
   }
 }
-}  // namespace ml
+}  // namespace ml2

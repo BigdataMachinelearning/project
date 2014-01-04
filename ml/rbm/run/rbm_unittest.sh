@@ -8,6 +8,9 @@ cmd="
   --gtest_filter=RBMTest.LoadMovieLenTest
   --gtest_filter=RBMTest.MovieLenTest
   --gtest_filter=EigenRBMTest.MovieLenTest
+  --gtest_filter=RepSoftmaxTest.AisTest
+  --gtest_filter=AisTest.UniformSampleTest
+  --gtest_filter=Ais.AisTest
   "
 gdb="
   gdb ./makeout/rbm_unittest.o

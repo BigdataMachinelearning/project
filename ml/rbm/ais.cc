@@ -1,93 +1,83 @@
 // Copyright 2013 yuanwujun, All Rights Reserved.
 // Author: real.yuanwj@gmail.com
-#include "ml/rbm/repsoftmax.h"
 #include "ml/rbm/ais.h"
 
+#include "ml/rbm/repsoftmax.h"
 #include "ml/document.h"
 #include "ml/rbm/rbm_util.h"
-#include "ml/info.h"
 #include "ml/util.h"
 
-#include <cmath>
-
 namespace ml {
-void SampleV(const VReal &h,const int wn,const RepSoftMax &rbm,const Real belt,VReal* v) {
-  VReal expect(wn);
-  VReal arr(v->size());
-  for (size_t k = 0; k < expect.size(); ++k) {
-    arr[k] = 0;
-    for (size_t f = 0; f < h.size(); ++f) {
-      arr[k] += rbm.w[f][k] * h[f] * belt;
-    }
-    arr[k] += rbm.b[k] * belt;
-  }
-  ml::Softmax(arr, &expect);
-  
-  for (int i = 0; i < wn; ++i) {
-    v->at(Random(expect))++;
-  }
-}
-
-void SampleH(const VReal& wl,const int wn,const RepSoftMax &rbm, const Real belt, VReal* h) {
-  h->resize(rbm.c.size());
-  for (size_t f = 0; f < h->size(); f++) {
+double CalculateP(int len, const VInt &v, double beta, const RepSoftMax &rbm) {
+  double result = 0;
+  for (size_t f = 0; f < rbm.c.size(); ++f) {
     double sum = 0.0;
-    for (size_t w = 0; w < wl.size(); ++w) {
-      sum += rbm.w[f][w] * wl[w] * belt;
-    }
-    sum += rbm.c[f] * wn * belt;
-    h->at(f) = Sigmoid(sum);
-  }
-  
-  for (size_t i = 0; i < h->size(); i++) {
-    (*h)[i] = Sample1((*h)[i]);
-  }
-}
-
-void UniformSample(VReal& v,const RepSoftMax& rbm) {
-  const int base = 2;
-  for( size_t i = 0; i < v.size(); ++i ) {
-    v[i] = random() % static_cast<long int>(powl(base, rbm.c.size()));
-  }
-}
-
-double CalculateP(const VReal& v,const Real belt,const ml::RepSoftMax& rbm) {
-  const int fhidden = rbm.c.size();
-  const int kwords = rbm.b.size();
-  double result = 1;
-  for(int f = 0; f < fhidden; ++f) {
-    double sum = 0.0;
-    for(int k = 0; k < kwords; ++k) {
+    for (size_t k = 0; k < rbm.b.size(); ++k) {
       sum += rbm.w[f][k] * v[k];
     }
-    double factor = exp(sum * belt) + 1;
-    result *= factor;
+    sum += len * rbm.c[f];
+    result += sum * beta;
+  }
+  for(size_t k = 0; k < rbm.b.size(); ++k) {
+    result += rbm.b[k] * v[k] * beta;
   }
   return result;
 }
 
-double AISEstimate(const int runs, const VReal& belts,const ml::RepSoftMax& rbm) {
-  const int ncorpus = rbm.b.size();
-  VVReal vtransition(belts.size());
-  for(size_t i = 0; i < belts.size(); ++i) {
-    vtransition[i].resize(ncorpus);
+void UniformSample(const Document &doc, VInt* v) {
+  VInt tmp(doc.Len());
+  ::UniformSample(doc.TotalLen(), &tmp);
+  for (int i = 0; i < doc.Len(); i++) {
+    v->at(doc.words[i]) = tmp[i];
   }
+}
+
+void Multiply(const RepSoftMax &src, double beta, RepSoftMax* des) {
+  des->Init(src.w.size(), src.w[0].size(), src.bach_size, src.momentum,
+                                           src.eta);
+  for (size_t i = 0; i < src.b.size(); i++) {
+    des->b[i] = src.b[i] * beta;
+  }
+  for (size_t i = 0; i < src.c.size(); i++) {
+    des->c[i] = src.c[i] * beta;
+  }
+  for (size_t i = 0; i < src.w.size(); i++) {
+    for (size_t j = 0; j < src.w[0].size(); j++) {
+      des->w[i][j] = src.w[i][j] * beta;
+    }
+  }
+}
+
+double Partition(const Document &doc, int runs, const VReal &beta,
+                                                const RepSoftMax &rbm) {
   VReal wais;
   Init(runs, 1, &wais);
   for(int k = 0; k < runs; ++k) {
-    UniformSample(vtransition[0],rbm);
-    for(size_t i = 0; i < belts.size() - 1; ++i) {
+    VVInt v;
+    Init(beta.size(), rbm.b.size(), 1, &v);
+    UniformSample(doc, &v[0]);
+    for(size_t i = 0; i < beta.size() - 1; ++i) {
+      RepSoftMax tmp;
+      Multiply(rbm, beta[i], &tmp);
       VReal h;
-      SampleH(vtransition[i],ncorpus,rbm,belts[i],&h);
-      SampleV(h,ncorpus,rbm,belts[i],&vtransition[i+1]);
+      SampleH(doc.TotalLen(), doc.words, v[i], tmp, &h);
+      SampleV(doc, h, tmp, &v[i + 1]);
     }
-    for(size_t i = 1; i < belts.size(); ++i ) {
-      double pratio = CalculateP(vtransition[i],belts[i],rbm) / 
-                      CalculateP(vtransition[i],belts[i - 1],rbm);
-      wais[k] *= pratio;
+    LOG(INFO) << Join(v, " ", "\n");
+    for(size_t i = 1; i < beta.size(); ++i ) {
+      wais[k] *= exp(CalculateP(doc.TotalLen(), v[i], beta[i], rbm)) 
+          / exp(CalculateP(doc.TotalLen(), v[i], beta[i - 1], rbm));
     }
-    LOG(INFO) << wais[k];
   }
   return std::accumulate(wais.begin(), wais.end(), 0.0) / runs;
+}
+
+double Probability(const Document &doc, int runs, const VReal &beta,
+                                        const RepSoftMax &rbm) {
+  double partition = Partition(doc, runs, beta, rbm); 
+  LOG(INFO) << partition;
+  double p = CalculateP(doc.TotalLen(), doc.counts, 1, rbm);
+  LOG(INFO) << p;
+  return p / partition;
 }
 } // namespace ml

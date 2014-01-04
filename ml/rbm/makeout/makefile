@@ -4,14 +4,16 @@ WorkDir:=$(BaseDir)/ml/rbm
 
 name:=rbm_unittest
 $(name)_update_dep:=\
-  rbm.o\
-  util.o\
-  document.o\
-  rbm2.o\
-  rbm_util.o
+  repsoftmax.o\
+  ais.o
 $(name)_remain_dep:=\
-  join.o\
+  rbm.o\
   base.o\
+  rbm_util.o\
+  document.o\
+  util.o\
+  rbm2.o\
+  join.o\
   string_util.o\
   $(GTestDir)/gtest-all.o
 include post_unittest_makefile
