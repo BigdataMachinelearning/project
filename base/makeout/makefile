@@ -7,6 +7,7 @@ name:=base_unittest
 $(name)_update_dep:=\
   base.o\
   join.o\
+  probability.o\
   string_util.o
 $(name)_remain_dep:=\
   $(GTestDir)/gtest-all.o

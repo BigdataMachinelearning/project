@@ -48,14 +48,14 @@ TEST(StrUtil, LowerTEST) {
   EXPECT_EQ("this", Lower(str));
 }
 
-TEST(JoinTest, MapToStr) {
+TEST(Join, MapToStr) {
   MIntInt m;
   m[1] = 1;
   m[2] = 2;
   EXPECT_EQ("1 1 \n2 2 \n", MapToStr(m));
 }
 
-TEST(JoinTest, JoinTEST) {
+TEST(Join, JoinTEST) {
   VStr v;
   v.push_back("hello");
   v.push_back("world");
@@ -72,7 +72,7 @@ TEST(JoinTest, JoinTEST) {
   DelArray(a, len1);
 }
 
-TEST(JoinTest, IntTEST) {
+TEST(Join, IntTEST) {
   VInt data;
   data.push_back(1);
   data.push_back(2);
@@ -140,13 +140,20 @@ TEST(BaseTest, RandomTest2) {
   EXPECT_LT(std::abs(p - r[3]), precision);
 }
 
-TEST(InitTest, InitTEST) {
+TEST(Join, InitTEST) {
   VReal tmp;
   Init(2, 0.0, &tmp);
   EXPECT_EQ("0 0 ", Join(tmp, " "));
   VVReal tmp2;
   Init(2, 2, 0.0, &tmp2);
   EXPECT_EQ("0 0 \n0 0 \n", Join(tmp2, " ", "\n"));
+
+  VReal tmp3;
+  Init(2, 1, &tmp3);
+  EXPECT_EQ("1 1 ", Join(tmp3, " "));
+  VVInt tmp4;
+  Init(2, 2, 1, &tmp4);
+  EXPECT_EQ("1 1 \n1 1 \n", Join(tmp4, " ", "\n"));
 }
 
 TEST(Random, SigmoidTest) {
@@ -236,6 +243,28 @@ TEST(Random, UniformSampleTEST) {
   EXPECT_LT(std::abs(v[0] - 1000), 100);
   EXPECT_LT(std::abs(v[1] - 1000), 100);
   EXPECT_LT(std::abs(v[2] - 1000), 100);
+}
+
+TEST(StlUtil, MultiplyTEST) {
+  VReal v(2);
+  v[0] = 1;
+  v[1] = 2;
+  VVReal v2(2, v);
+  VReal v3(v.size());
+  double m = 2;
+  Multiply(v, m, &v);
+  EXPECT_DOUBLE_EQ(v[0], 2);
+  EXPECT_DOUBLE_EQ(v[1], 4);
+  Multiply(v2, m, &v2);
+}
+
+TEST(Probability, NextMutiSeqTEST) {
+  int num = 10;
+  VInt v(4, 0);
+  v[0] = 10;
+  while (NextMultiSeq(num, &v)) {
+    EXPECT_EQ(Sum(v), 10);
+  }
 }
 
 struct F{

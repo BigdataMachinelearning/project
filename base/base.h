@@ -7,6 +7,9 @@
 void Init(int len, double value, VReal* des);
 void Init(int row, int col, double value, VVReal* des);
 void Init(int len1, int len2, int len3, double value, VVVReal* des);
+
+void Init(int len, int value, VInt* des);
+void Init(int row, int col, int value, VVInt* des);
 void Cumulate(VReal* des);
 
 inline double Square(double a) {
@@ -20,6 +23,8 @@ inline double Log2(double a) {
 void Append(const VReal &src, VReal* des);
 void Append(const VVReal &src, VReal* des);
 void Append(const VVVReal &src, VReal* des);
+int Sum(const VInt &src);
+double Sum(const VReal &src);
 void Sum(const VVReal &src, VReal* des);
 
 class Time {

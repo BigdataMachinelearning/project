@@ -25,4 +25,16 @@ inline int DiffNum(const VInt &lhs, const VInt &rhs) {
   }
   return count;
 }
+
+inline void Multiply(const VReal &src, double m, VReal* des) {
+  for (size_t i = 0; i < src.size(); i++) {
+    des->at(i) = src.at(i) * m;
+  }
+}
+
+inline void Multiply(const VVReal &src, double m, VVReal* des) {
+  for (size_t i = 0; i < src.size(); i++) {
+    Multiply(src[i], m, &(des->at(i)));
+  }
+}
 #endif // BASE_STL_UTIL

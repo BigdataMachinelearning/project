@@ -9,6 +9,7 @@
 #include "base/c_util.h"
 #include "base/io_util.h"
 #include "base/join.h"
+#include "base/probability.h"
 #include "base/random.h"
 #include "base/stat.h"
 #include "base/stl_util.h"

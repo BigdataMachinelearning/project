@@ -8,3 +8,6 @@ join.o:
 
 base.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/base/base.cc $(Include) -Wno-deprecated
+
+probability.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/probability.cc $(Include) -Wno-deprecated

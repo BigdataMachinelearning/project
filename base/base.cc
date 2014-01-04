@@ -31,10 +31,18 @@ void Cumulate(VReal* des) {
   }
 }
 
+int Sum(const VInt &src) {
+  return std::accumulate(src.begin(), src.end(), 0);
+}
+
+double Sum(const VReal &src) {
+  return std::accumulate(src.begin(), src.end(), 0.0);
+}
+
 void Sum(const VVReal &src, VReal* des) {
   des->resize(src.size());
   for (size_t i = 0; i < src.size(); i++) {
-    des->at(i) = std::accumulate(src[i].begin(), src[i].end(), 0.0);
+    des->at(i) = Sum(src[i]);
   }
 }
 
@@ -54,4 +62,16 @@ void Append(const VVVReal &src, VReal* des) {
   for (size_t i = 0; i < src.size(); i++) {
     Append(src[i], des);
   }
+}
+
+void Init(int len, int value, VInt* des) {
+  VInt tmp(len, value);
+  des->swap(tmp);
+}
+
+void Init(int row, int col, int value, VVInt* des) {
+  VInt tmp;
+  Init(col, value, &tmp);
+  VVInt tmp2(row, tmp);
+  des->swap(tmp2);
 }
