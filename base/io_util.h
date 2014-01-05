@@ -31,19 +31,15 @@ inline void WriteStrToFile(const Str &str, const Str &file) {
   o.close();
 }
 
-/*
-inline void ReadFile(const Str &file, int size, char* des) {
-  std::ofstream out(file.c_str(), std::ios::binary);
-  out.write((char*)(&a[0]), sizeof(a));
-  out.close();
-
-  VInt v2(2);
-  std::ifstream in("test", std::ios::binary);
-  in.read((char*)(&v2[0]), sizeof(v2));
+inline void ReadFile(const Str &file, VInt* des) {
+  std::ifstream in(file, std::ios::binary);
+  in.read((char*)(&(des->at(0))), sizeof(*des));
   in.close( );
-  LOG(INFO) << Join(v2, " ");
-  LOG(INFO) << sizeof(a);
-  LOG(INFO) << sizeof(v2);
 }
-*/
+
+inline void WriteFile(const Str &file, const VInt &data) {
+  std::ofstream out(file, std::ios::binary);
+  out.write((char*)(&data[0]), sizeof(data));
+  out.close();
+}
 #endif  // BASE_IO_UTIL_H_

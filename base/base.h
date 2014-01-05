@@ -23,9 +23,30 @@ inline double Log2(double a) {
 void Append(const VReal &src, VReal* des);
 void Append(const VVReal &src, VReal* des);
 void Append(const VVVReal &src, VReal* des);
+
 int Sum(const VInt &src);
 double Sum(const VReal &src);
 void Sum(const VVReal &src, VReal* des);
+
+template<typename Iterator,typename Num_Type>
+inline void Range(Iterator t, Num_Type beg, int length, Num_Type interval = 1) {
+  for(int i = 0; i < length; i++) {
+    *(t++) = beg;
+    beg += interval;
+  }
+}
+
+inline void Range(int beg, int end, int interval, VInt* s) {
+  for (int i = beg; i != end; i += interval) {
+    s->push_back(i); 
+  }
+}
+
+inline void Range(double beg, double end, double interval, VReal* s) {
+  for (double i = beg; i < end; i += interval) {
+    s->push_back(i); 
+  }
+}
 
 class Time {
  public:

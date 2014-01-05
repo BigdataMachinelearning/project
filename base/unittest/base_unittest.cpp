@@ -104,7 +104,16 @@ TEST(StatTest, MaxTest) {
   EXPECT_LT(std::abs(40 - Max(a, 5)), 0.0001);
 }
 
-TEST(BaseTest, RandomTest) {
+TEST(Base, RangeTest) {
+  VInt v;
+  Range(1, 5, 1, &v);
+  EXPECT_EQ(Join(v, " "), "1 2 3 4 ");
+  VReal v2;
+  Range(0.1, 0.5, 0.1, &v2);
+  EXPECT_EQ(Join(v2, " "), "0.1 0.2 0.3 0.4 ");
+}
+
+TEST(Base, RandomTest) {
   VReal tmp;
   tmp.push_back(20);
   tmp.push_back(10);
@@ -121,7 +130,7 @@ TEST(BaseTest, RandomTest) {
   EXPECT_LT(std::abs(num2 - m[2]), 100);
 }
 
-TEST(BaseTest, RandomTest2) {
+TEST(Base, RandomTest2) {
   int k = 4;
   int num = 100000;
   MIntInt m;
@@ -175,7 +184,7 @@ TEST(Random, Sample1Test) {
 }
 
 
-TEST(BaseTest, SquareTEST) {
+TEST(Base, SquareTEST) {
   double a = 2.0;
   EXPECT_LT(std::abs(Square(a) - 4), 0.001);
 }
@@ -198,7 +207,7 @@ TEST(StatTest, ExpectTEST) {
   EXPECT_LT(std::abs(Expect(v2) - 3), 0.000001);
 }
 
-TEST(BaseTest, SumTEST) {
+TEST(Base, SumTEST) {
   VReal v;
   v.push_back(1);
   v.push_back(2);
@@ -267,29 +276,18 @@ TEST(Probability, NextMutiSeqTEST) {
   }
 }
 
-struct F{
-  int* a;
-  int size;
-};
-
-/*
 TEST(IOUtilTest, FIOTEST) {
-  int a[2];
+  VInt a(2);
   a[0] = 1;
   a[1] = 2;
-  std::ofstream out("test", std::ios::binary);
-  out.write((char*)(&a[0]), sizeof(a));
-  out.close();
+  Str file("data/test");
+  WriteFile(file, a);
 
   VInt v2(2);
-  std::ifstream in("test", std::ios::binary);
-  in.read((char*)(&v2[0]), sizeof(v2));
-  in.close( );
-  LOG(INFO) << Join(v2, " ");
-  LOG(INFO) << sizeof(a);
-  LOG(INFO) << sizeof(v2);
+  ReadFile(file, &v2);
+  EXPECT_EQ(v2[0], 1);
+  EXPECT_EQ(v2[1], 2);
 }
-*/
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
