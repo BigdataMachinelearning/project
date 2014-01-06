@@ -232,6 +232,14 @@ TEST(StlUtil, ToSetTEST) {
   EXPECT_EQ("1 2 3 ", Join(s, " "));
 }
 
+TEST(StlUtil, MaxTEST) {
+  VInt v;
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
+  EXPECT_EQ(3, Max(v));
+}
+
 TEST(StlUtil, DiffNumTEST) {
   VInt v;
   v.push_back(1);
@@ -268,12 +276,20 @@ TEST(StlUtil, MultiplyTEST) {
 }
 
 TEST(Probability, NextMutiSeqTEST) {
-  int num = 10;
   VInt v(4, 0);
   v[0] = 10;
-  while (NextMultiSeq(num, &v)) {
+  while (NextMultiSeq(&v)) {
     EXPECT_EQ(Sum(v), 10);
   }
+}
+
+TEST(Probability, NextBinarySeqTEST) {
+  VInt v(4, 0);
+  int count = 1;
+  while (NextBinarySeq(&v)) {
+    count++;
+  }
+  EXPECT_EQ(16, count);
 }
 
 TEST(IOUtilTest, FIOTEST) {

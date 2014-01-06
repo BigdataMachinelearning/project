@@ -4,5 +4,6 @@
 #define BASE_PROBABILITY_H_
 #include "base/type.h"
 int SumTopN(const VInt &src, int len);
-bool NextMultiSeq(int num, VInt* des);
+bool NextMultiSeq(VInt* des);
+bool NextBinarySeq(VInt* des);
 #endif // BASE_PROBABILITY_H_

@@ -7,7 +7,7 @@ int SumTopN(const VInt &src, int len) {
   return std::accumulate(src.begin(), src.begin() + len, 0);
 }
 
-bool NextMultiSeq(int num, VInt* des) {
+bool NextMultiSeq(VInt* des) {
   if (SumTopN(*des, des->size() - 1) == 0) {
     return false;
   }
@@ -25,4 +25,22 @@ bool NextMultiSeq(int num, VInt* des) {
     des->at(pos + 1) += 1;
   }
   return true;
+}
+
+bool NextBinarySeq(VInt* des) {
+  if (des->at(0) == 0) {
+    des->at(0) = 1;
+    return true;
+  }
+  size_t i = 0;
+  while (i < des->size() && des->at(i) == 1) {
+    des->at(i) = 0;
+    i++;
+  }
+  if (i < des->size()) {
+    des->at(i) = 1;
+    return true;
+  } else {
+    return false;
+  }
 }

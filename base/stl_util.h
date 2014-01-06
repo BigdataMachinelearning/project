@@ -37,4 +37,9 @@ inline void Multiply(const VVReal &src, double m, VVReal* des) {
     Multiply(src[i], m, &(des->at(i)));
   }
 }
+
+template <typename T>
+inline double Max(const T &data) {
+  return *(std::max_element(data.begin(), data.end()));
+}
 #endif // BASE_STL_UTIL
