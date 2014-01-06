@@ -34,8 +34,8 @@ $(name)_remain_dep:=\
 include post_unittest_makefile
 
 name:=info_unittest
-name:=util_unittest
 name:=document_unittest
+name:=util_unittest
 include main_makefile
 
 include update

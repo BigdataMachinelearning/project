@@ -5,15 +5,17 @@ cmd="
   ./makeout/rbm_app.o
   --eta=0.001
   --eta=0.01
-  --bach_size=200
-  --k=10
-  --it_num=5
+  --bach_size=2
+  --k=1
+  --it_num=200
   --type=eigen
   --type=stl
   --type=softmax
   --train_path=../../data/ap.dat
   --train_path=../data/document_demo
+  --train_path=test
   --algorithm_type=1
+  --ais_run=5
   "
 gdb="
   gdb ./makeout/rbm_app.o

@@ -11,5 +11,6 @@ double Partition(const Document &doc, int runs, const VReal &beta,
 void UniformSample(const Document &doc, VInt* v);
 double Probability(const Document &doc, int runs, const VReal &beta,
                                         const RepSoftMax &rbm);
-};
+double LogPartition(int doc_len, int word_num, const RepSoftMax &rep);
+}; // namespace ml
 #endif // ML_RBM_AIS_H_

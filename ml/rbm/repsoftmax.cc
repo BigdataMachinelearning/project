@@ -253,6 +253,11 @@ void RepSoftmaxTest(const RepSoftMax &rbm, const Corpus &corpus,
   WriteStrToFile(Join(PVHs,"\n"), "test.txt");
 }
 
+void EyeRep(int f, int k, RepSoftMax* rep) {
+  Init(f, k, 1, &(rep->w));
+  Init(k, 1, &(rep->b));
+  Init(f,1, &(rep->c));
+}
 /*
 void CD(const Document &doc, const RepSoftMax &rbm, int step, VInt* v) {
   VReal h1;

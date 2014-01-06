@@ -8,7 +8,7 @@
 #include "ml/util.h"
 
 namespace ml {
-double CalculateP(int len, const VInt &v, double beta, const RepSoftMax &rbm) {
+double MinusEnergy(int len, const VInt &v, double beta, const RepSoftMax &rbm) {
   double result = 0;
   for (size_t f = 0; f < rbm.c.size(); ++f) {
     double sum = 0.0;
@@ -35,49 +35,86 @@ void UniformSample(const Document &doc, VInt* v) {
 void Multiply(const RepSoftMax &src, double beta, RepSoftMax* des) {
   des->Init(src.w.size(), src.w[0].size(), src.bach_size, src.momentum,
                                            src.eta);
-  for (size_t i = 0; i < src.b.size(); i++) {
-    des->b[i] = src.b[i] * beta;
-  }
-  for (size_t i = 0; i < src.c.size(); i++) {
-    des->c[i] = src.c[i] * beta;
-  }
-  for (size_t i = 0; i < src.w.size(); i++) {
-    for (size_t j = 0; j < src.w[0].size(); j++) {
-      des->w[i][j] = src.w[i][j] * beta;
-    }
-  }
+  ::Multiply(src.b, beta, &(des->b));
+  ::Multiply(src.c, beta, &(des->c));
+  ::Multiply(src.w, beta, &(des->w));
 }
 
 double Partition(const Document &doc, int runs, const VReal &beta,
                                                 const RepSoftMax &rbm) {
-  VReal wais;
-  Init(runs, 1, &wais);
+  double sum = 0.0;
   for(int k = 0; k < runs; ++k) {
-    VVInt v;
-    Init(beta.size(), rbm.b.size(), 1, &v);
-    UniformSample(doc, &v[0]);
+    VInt v1(rbm.b.size());
+    UniformSample(doc, &v1);// uninform shoud in the document
+    double wais = 1;
     for(size_t i = 0; i < beta.size() - 1; ++i) {
       RepSoftMax tmp;
       Multiply(rbm, beta[i], &tmp);
       VReal h;
-      SampleH(doc.TotalLen(), doc.words, v[i], tmp, &h);
-      SampleV(doc, h, tmp, &v[i + 1]);
+      SampleH(doc.TotalLen(), doc.words, v1, tmp, &h);
+      VInt v2(v1.size());
+      SampleV(doc, h, tmp, &v2);
+      wais *= exp(MinusEnergy(doc.TotalLen(), v2, beta[i + 1], rbm)) 
+          / exp(MinusEnergy(doc.TotalLen(), v1, beta[i], rbm));
+      v1.swap(v2);
     }
-    LOG(INFO) << Join(v, " ", "\n");
-    for(size_t i = 1; i < beta.size(); ++i ) {
-      wais[k] *= exp(CalculateP(doc.TotalLen(), v[i], beta[i], rbm)) 
-          / exp(CalculateP(doc.TotalLen(), v[i], beta[i - 1], rbm));
-    }
+    sum += wais;
+    LOG_IF(INFO, k % 1000 ==0) << k << " " << Join(v1, " ");
   }
-  return std::accumulate(wais.begin(), wais.end(), 0.0) / runs;
+  return sum / runs;
 }
 
 double Probability(const Document &doc, int runs, const VReal &beta,
                                         const RepSoftMax &rbm) {
-  double partition = Partition(doc, runs, beta, rbm); 
+  double partition = Partition(doc, runs, beta, rbm) * pow(2, rbm.c.size()); 
   LOG(INFO) << partition;
-  double p = CalculateP(doc.TotalLen(), doc.counts, 1, rbm);
+  double p = MinusEnergy(doc.TotalLen(), doc.counts, 1, rbm);
   LOG(INFO) << p;
   return p / partition;
+}
+
+double MinusEnergy(int len, const VInt &v, const VInt &h,
+                       const RepSoftMax &rbm) {
+  double result = 0;
+  result += Quadratic(v, h, rbm.w);
+  LOG(INFO) << result;
+  result += len * InnerProd(h, rbm.c);
+  LOG(INFO) << result;
+  result += InnerProd(v, rbm.b);
+  LOG(INFO) << result;
+  return result;
+}
+
+void Subtract(double m, VReal* v) {
+  for (size_t i = 0; i < v->size(); i++) {
+    v->at(i) -= m;
+  }
+}
+
+void Exp(VReal* v) {
+  for (size_t i = 0; i < v->size(); i++) {
+    v->at(i) = exp(v->at(i));
+  }
+}
+
+double LogPartition(int doc_len, int word_num, const RepSoftMax &rep) {
+  VInt v(word_num);
+  v[0] = doc_len;
+  VInt h(rep.c.size(), 0);
+  VReal m_energy;
+  do {
+    do {
+      LOG(INFO) << Join(h, " ")  << Join(v, " ");
+      LOG(INFO) << Join(rep.w, " ", "\n");
+      LOG(INFO) << Join(rep.b, " ");
+      LOG(INFO) << Join(rep.c, " ");
+      m_energy.push_back(MinusEnergy(doc_len, h, v, rep));
+    } while (NextBinarySeq(&h));
+  } while (NextMultiSeq(&v));
+  LOG(INFO) << Join(m_energy, " ");
+  double m = Max(m_energy);
+  Subtract(m, &m_energy);
+  Exp(&m_energy);
+  return m * log(Sum(m_energy));
 }
 } // namespace ml

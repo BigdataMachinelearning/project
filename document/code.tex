@@ -16,6 +16,7 @@
 \item void Multiply(const VVReal \&src, double m, VVReal* des);
 \item int DiffNum(const VInt \&lhs, const VInt \&rhs);
 \\ the number of different value between lhs and rhs
+\item double Max(const T \&data);
 \end{enumerate}
 
 \section{Probability.h}
@@ -23,4 +24,16 @@
 \item int SumTopN(const VInt \&src, int len);
 \item bool NextMultiSeq(int num, VInt* des);
 \\ 产生下一个多项式分布的序列
+\item bool NextBinarySeq(VInt* des);
+\\ 产生下一个二进制的序列
+\end{enumerate}
+
+\section{IoUtil.h}
+\begin{enumerate}
+\item void ReadFileToStr(const Str \&file, Str* str);
+\item void ReadFileToStr(const Str \&file, const Str \&del, VStr* data);
+\item Str ReadFileToStr(const Str \&file);
+\item void WriteStrToFile(const Str \&str, const Str \&file);
+\item void ReadFile(const Str \&file, VInt* des);
+\item void WriteFile(const Str \&file, const VInt \&data);
 \end{enumerate}

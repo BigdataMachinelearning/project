@@ -68,17 +68,6 @@ TEST(Util, NormalSampleTest) {
   RandomInit(100, 100, 100, &tmp2);
   EXPECT_LT(std::abs(0.0 - Mean(tmp2)), 0.00001);
   EXPECT_LT(std::abs(0.0001 - Var(tmp2)), 0.00001);
-  int count = 0;
-  int c2 = 0;
-  for (int i = 0; i < 1000000; i++) {
-    if (NormalSample() > 0) {
-      count++;
-    } else {
-      c2++;
-    }
-  }
-  LOG(INFO) << count;
-  LOG(INFO) << c2;
 }
 
 TEST(Util, SumTest) {
@@ -103,6 +92,35 @@ TEST(Util, RandomOrderTest) {
     }
   }
   EXPECT_LT(c, 3);
+}
+
+TEST(Util, QuadraticTest) {
+  VReal lhs(2);
+  lhs[0] = 1;
+  lhs[1] = 2;
+  VReal rhs(3);
+  rhs[0] = 3;
+  rhs[1] = 4;
+  rhs[2] = 5;
+  VVReal w;
+  Init(lhs.size(), rhs.size(), 0, &w);
+  w[0][0] = 1;
+  w[0][1] = 2;
+  w[0][2] = 3;
+  w[1][0] = 4;
+  w[1][1] = 5;
+  w[1][2] = 6;
+  EXPECT_DOUBLE_EQ(150, Quadratic(lhs, rhs, w));
+}
+
+TEST(Util, InnerProdTest) {
+  VReal lhs(2);
+  lhs[0] = 1;
+  lhs[1] = 2;
+  VReal rhs(2);
+  rhs[0] = 3;
+  rhs[1] = 4;
+  EXPECT_DOUBLE_EQ(11, InnerProd(lhs, rhs));
 }
 } // namespace ml 
 

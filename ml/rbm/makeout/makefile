@@ -25,6 +25,7 @@ $(name)_update_dep:=\
   ais.o\
   rbm_util.o
 $(name)_remain_dep:=\
+  probability.o\
   join.o\
   rbm2.o\
   rbm.o\

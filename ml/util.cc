@@ -143,4 +143,22 @@ void RandomOrder(int len, int random_num, VInt* des) {
     des->at(r) = t;
   }
 }
+
+double Quadratic(const VReal &x, const VReal &y, const VVReal &w) {
+  double sum = 0;
+  for (size_t i = 0; i < x.size(); ++i) {
+    for (size_t j = 0; j < y.size(); ++j) {
+      sum += x[i] * w[i][j] * y[j];
+    }
+  }
+  return sum;
+}
+
+double InnerProd(const VReal &lhs, const VReal &rhs) {
+  double sum = 0;
+  for (size_t i = 0; i < lhs.size(); i++) {
+    sum += lhs[i] * rhs[i];
+  }
+  return sum;
+}
 } // namespace ml

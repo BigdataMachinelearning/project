@@ -27,5 +27,6 @@ void SampleV(const Document &doc, const VReal &h, const RepSoftMax &rbm,
 void SampleH(const Document &doc,const RepSoftMax &rbm, VReal* h);
 void SampleH(int len, const VInt &words, const VInt &counts,
                       const RepSoftMax &rbm, VReal* h);
+void EyeRep(int f, int k, RepSoftMax* rep);
 }  // namespace ml
 #endif // ML_RBM_REPSOFTMAX_H_

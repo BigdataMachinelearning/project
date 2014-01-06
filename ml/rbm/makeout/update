@@ -15,6 +15,9 @@ base.o:
 string_util.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/base/string_util.cc $(Include) -Wno-deprecated
 
+probability.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/base/probability.cc $(Include) -Wno-deprecated
+
 util.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/ml/util.cc $(Include) -Wno-deprecated
 
