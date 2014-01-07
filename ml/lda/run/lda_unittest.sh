@@ -7,9 +7,9 @@ export LD_LIBRARY_PATH="$Lib:LD_LIBRARY_PATH"
 cmd="
   ./makeout/lda_unittest.o
   --gtest_filter=LDATest.LDATest
-  --gtest_filter=LDATest.ReadDataTest
-  --gtest_filter=LDATest.LikelihoodTest
   --gtest_filter=LDATest.GibbsTest
+  --gtest_filter=LDATest.LikelihoodTest
+  --gtest_filter=LDATest.ReadDataTest
   --gtest_filter=LDATest.VAREMTest
   "
 exec $cmd

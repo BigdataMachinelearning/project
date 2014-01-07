@@ -1,7 +1,7 @@
 // Copyright 2013 lijiankou. All Rights Reserved.
 // Author: lijk_start@163.com (Jiankou Li)
-#ifndef LDA_LDA_H_
-#define LDA_LDA_H_
+#ifndef ML_LDA_LDA_H_
+#define ML_LDA_LDA_H_
 #include "base/base_head.h"
 #include "ml/document.h"
 namespace ml {
@@ -34,4 +34,4 @@ struct LdaSuffStats {
 };
 typedef const LdaSuffStats LdaSuffStatsC;
 }  // namespace ml 
-#endif  // LDA_LDA_H_
+#endif  // ML_LDA_LDA_H_

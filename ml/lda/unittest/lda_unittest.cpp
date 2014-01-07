@@ -23,7 +23,7 @@ TEST(LDATest, LikelihoodTest) {
   doc.total = 4;
   doc.words.resize(len);
   doc.counts.resize(len);
-  for (int i = 0; i < doc.Len(); i++) {
+  for (int i = 0; i < doc.ULen(); i++) {
     doc.words[i] = i; 
     doc.counts[i] = 2; 
   }

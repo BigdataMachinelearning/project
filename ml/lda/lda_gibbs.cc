@@ -19,8 +19,8 @@ void GibbsInitSS(CorpusC &corpus, int k, VVInt* z, LdaSuffStats* ss) {
   corpus.NewLatent(z);
   MIntInt dic; // for test
   ss->Init(corpus.Len(), k, corpus.num_terms);
-  for (int m = 0; m < corpus.Len(); m++) {
-    for (int n = 0; n < corpus.DocLen(m); n++) {
+  for (size_t m = 0; m < corpus.Len(); m++) {
+    for (size_t n = 0; n < corpus.ULen(m); n++) {
       for (int i = 0; i < corpus.Count(m, n); i++) {
         (*z)[m][n] = Random(k);
         dic[(*z)[m][n]]++; // for test
@@ -76,8 +76,8 @@ void GibbsInfer(int Num, int k, CorpusC &corpus, LdaModel* model) {
   GibbsInitSS(corpus, k, &z, &suff);
   for (int i = 0; i <= Num; ++i) { 
     LOG(INFO) << i;
-    for (int m = 0; m < corpus.Len(); m++) { 
-      for (int n = 0; n < corpus.docs[m].Len(); n++) { 
+    for (size_t m = 0; m < corpus.Len(); m++) { 
+      for (size_t n = 0; n < corpus.docs[m].ULen(); n++) { 
         z[m][n] = Sampling(m, n, corpus, z, *model, &suff); 
       } 
     } 
