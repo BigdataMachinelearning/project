@@ -42,4 +42,11 @@ template <typename T>
 inline double Max(const T &data) {
   return *(std::max_element(data.begin(), data.end()));
 }
+
+template <typename E, typename C>
+inline void Push(int num, const E &e, C* des) {
+  for (int i = 0; i < num; i++) {
+    des->push_back(e);
+  }
+}
 #endif // BASE_STL_UTIL

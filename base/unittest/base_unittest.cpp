@@ -83,23 +83,31 @@ TEST(Join, IntTEST) {
   EXPECT_EQ("1 2 \n1 2 \n", Join(data2, " ", "\n"));
 }
 
-TEST(StatTest, LogSumTest) {
+TEST(Stat, LogSumTest) {
   EXPECT_LT(std::abs(1.69315 - LogSum(1, 1)), 0.0001);
+  LOG(INFO) << LogSum(1, 2);
 }
 
-TEST(StatTest, TriGammaTest) {
+TEST(Stat, LogParitionTest) {
+  VReal e;
+  e.push_back(4);
+  e.push_back(6);
+  EXPECT_DOUBLE_EQ(log(exp(6) + exp(4)), LogPartition(e));
+}
+
+TEST(Stat, TriGammaTest) {
   EXPECT_LT(std::abs(0.105166 - TriGamma(10)), 0.0001);
 }
 
-TEST(StatTest, DigGmmaTest) {
+TEST(Stat, DigGmmaTest) {
   EXPECT_LT(std::abs(2.25175 - DiGamma(10)), 0.0001);
 }
 
-TEST(StatTest, LoggammaTest) {
+TEST(Stat, LoggammaTest) {
   EXPECT_LT(std::abs(-94.0718 - LogGamma(0.1)), 0.0001);
 }
 
-TEST(StatTest, MaxTest) {
+TEST(Stat, MaxTest) {
   double a[] = {1, 2, 40.0, 10, -1};
   EXPECT_LT(std::abs(40 - Max(a, 5)), 0.0001);
 }
@@ -303,6 +311,15 @@ TEST(IOUtilTest, FIOTEST) {
   ReadFile(file, &v2);
   EXPECT_EQ(v2[0], 1);
   EXPECT_EQ(v2[1], 2);
+}
+
+TEST(StlUtil, PushTEST) {
+  VInt v;
+  int a = 1;
+  Push(2, a, &v);
+  EXPECT_EQ(2, v.size());
+  EXPECT_EQ(1, v[0]);
+  EXPECT_EQ(1, v[1]);
 }
 
 int main(int argc, char* argv[]) {

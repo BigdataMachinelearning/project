@@ -5,14 +5,26 @@
 #include <algorithm>
 #include <cstdio>
 #include <cmath>
+
+#include "base/stl_util.h"
+#include "base/math_util.h"
+
 inline double LogSum(double log_a, double log_b) {
   double v;
   if (log_a < log_b) {
-    v = log_b+log(1 + exp(log_a-log_b));
+    v = log_b + log(1 + exp(log_a - log_b));
   } else {
-    v = log_a+log(1 + exp(log_b-log_a));
+    v = log_a + log(1 + exp(log_b - log_a));
   }
   return(v);
+}
+
+inline double LogPartition(const VReal &data) {
+  double m = Max(data);
+  VReal tmp(data);
+  Subtract(m, &tmp);
+  Exp(&tmp);
+  return m + log(Sum(tmp));
 }
 
 /**
