@@ -42,7 +42,16 @@
 \section{stat.h}
 \begin{enumerate}
 \item double LogSum(double log\_a, double log\_b);
-\item double LogSum(const VReal \&data);
-\\LogSum函数可以在求配分函数的时候用，很多时候势函数由于很
-大造成溢出，采用取对数的方法可以防止溢出。
+\item double LogPartition(const VReal \&data);
+\\输入data表示负能量值，返回对数配分函数。
+很多时候势函数由于很大造成溢出，采用取对数的方法可以防止溢出。
+\end{enumerate}
+
+\chapter{ML}
+\section{document.h}
+
+\section{rbm}
+\subsection{ais.h}
+\begin{enumerate}
+\item double LogPartition(int doc\_len, int word\_num, const RepSoftMax \&rep);
 \end{enumerate}
