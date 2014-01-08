@@ -6,7 +6,7 @@ cmd="
   --eta=0.001
   --eta=0.01
   --bach_size=2
-  --k=1
+  --k=2
   --it_num=200
   --type=eigen
   --type=stl
@@ -15,7 +15,7 @@ cmd="
   --train_path=../data/document_demo
   --train_path=test
   --algorithm_type=1
-  --ais_run=5
+  --ais_run=200
   "
 gdb="
   gdb ./makeout/rbm_app.o

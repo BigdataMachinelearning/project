@@ -33,9 +33,9 @@ $(name)_remain_dep:=\
   $(GTestDir)/gtest-all.o
 include post_unittest_makefile
 
-name:=info_unittest
 name:=document_unittest
 name:=util_unittest
+name:=info_unittest
 include main_makefile
 
 include update

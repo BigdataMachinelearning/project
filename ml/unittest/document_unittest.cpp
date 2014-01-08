@@ -11,8 +11,8 @@ TEST(Document, ReadDataTest) {
   c.LoadData(data);
   EXPECT_EQ(10473,  c.num_terms);
   EXPECT_EQ(2246,  c.docs.size());
-  EXPECT_EQ(186,  c.docs[0].Len());
-  EXPECT_EQ(263,  c.docs[0].total);
+  EXPECT_EQ(186,  c.docs[0].ULen());
+  EXPECT_EQ(263,  c.TLen(0));
   EXPECT_EQ(6144,  c.docs[0].words[1]);
   EXPECT_EQ(1,  c.docs[0].counts[1]);
 }
@@ -22,7 +22,7 @@ TEST(Document, LoadDataTest) {
   Corpus c;
   c.LoadData(data);
   EXPECT_EQ(6,  c.Len());
-  EXPECT_EQ(4,  c.DocLen(0));
+  EXPECT_EQ(4,  c.ULen(0));
   EXPECT_EQ(10,  c.Count(0, 0));
   EXPECT_EQ(4,  c.TermNum());
 }
@@ -34,7 +34,7 @@ TEST(Document, SplitDataTest) {
   Corpus train;
   Corpus test;
   double value = 0.5;
-  SplitData(c, 0.5, &train, &test);
+  SplitData(c, 0.8, &train, &test);
   LOG(INFO) << train.Len();
   LOG(INFO) << test.Len();
 }
@@ -44,12 +44,12 @@ TEST(Document, RandomOrderTest) {
   Corpus c;
   c.LoadData(data);
   VInt len;
-  c.DocLen(&len);
+  c.ULen(&len);
   c.RandomOrder();
   VInt len2;
-  c.DocLen(&len2);
+  c.ULen(&len2);
   VInt len3;
-  c.DocLen(&len3);
+  c.ULen(&len3);
   EXPECT_GT(DiffNum(len, len2), c.Len() - 100);
   EXPECT_EQ(DiffNum(len3, len2), 0);
 }

@@ -72,21 +72,17 @@ void App3() {
   Corpus corpus;
   corpus.LoadData(FLAGS_train_path);
   // corpus.RandomOrder();
-  RepSoftMax softmax;
-  softmax.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
+  RepSoftMax rep;
+  rep.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
   if (FLAGS_algorithm_type == 1) {
-    RBMLearning(corpus, FLAGS_it_num, &softmax);
+    RBMLearning(corpus, FLAGS_it_num, &rep);
   } else {
-    RBMLearning2(corpus, FLAGS_it_num, &softmax);
+    RBMLearning2(corpus, FLAGS_it_num, &rep);
   }
   VReal beta;
-  Range(0.01, 1, 0.01, &beta);
-  LOG(INFO) << Probability(corpus.docs[0], FLAGS_ais_run, beta, softmax);
-
-  RepSoftMax rep;
-  EyeRep(1, 2, &rep);
-  LOG(INFO) << LogPartition(2, 2, rep);
-  LOG(INFO) << log(3 * (exp(4) + exp(7)));
+  Range(0.0001, 1, 0.0001, &beta);
+  LOG(INFO) << Likelihood(corpus.docs[0], FLAGS_ais_run, beta, rep);
+  LOG(INFO) << LogPartition(corpus.TLen(0), corpus.ULen(0), rep);
 }
 } // namespace ml
 

@@ -37,11 +37,11 @@ void Corpus::LoadData(const Str &filename) {
   printf("number of terms   : %d\n", num_terms);
 }
 
-int Corpus::MaxCorpusLen() const {
-  int max_len = 0;
+size_t Corpus::MaxCorpusLen() const {
+  size_t max_len = 0;
   for (size_t i = 0; i < docs.size(); i++) {
-    if (docs[i].Len() > max_len) {
-      max_len = static_cast<int>(docs[i].words.size());
+    if (docs[i].TLen() > max_len) {
+      max_len = docs[i].words.size();
     }
   }
   return max_len;
@@ -49,23 +49,23 @@ int Corpus::MaxCorpusLen() const {
 
 void Corpus::NewLatent(VVInt* z) const {
   z->resize(this->Len());
-  for (int i = 0; i < this->Len(); i++) {
-    z->at(i).resize(this->DocLen(i));
+  for (size_t i = 0; i < this->Len(); i++) {
+    z->at(i).resize(this->ULen(i));
   }
 }
 
 void Corpus::NewLatent(VVReal* z) const {
   z->resize(this->Len());
-  for (int i = 0; i < this->Len(); i++) {
-    z->at(i).resize(this->DocLen(i));
+  for (size_t i = 0; i < this->Len(); i++) {
+    z->at(i).resize(this->ULen(i));
   }
 }
 
 void Corpus::NewLatent(VVVReal* z, int k) const {
   z->resize(this->Len());
-  for (int i = 0; i < this->Len(); i++) {
-    z->at(i).resize(this->DocLen(i));
-    for (int j = 0; j < this->DocLen(i); j++) {
+  for (size_t i = 0; i < this->Len(); i++) {
+    z->at(i).resize(this->ULen(i));
+    for (size_t j = 0; j < this->ULen(i); j++) {
       z->at(i).at(j).resize(k);
     }
   }
@@ -81,10 +81,10 @@ void Corpus::RandomOrder() {
   docs.swap(v);
 }
 
-void Corpus::DocLen(VInt* v) const {
+void Corpus::ULen(VInt* v) const {
   v->resize(Len());
-  for (int i = 0; i < Len(); i++) {
-    v->at(i) = DocLen(i);
+  for (size_t i = 0; i < Len(); i++) {
+    v->at(i) = ULen(i);
   }
 }
 
@@ -92,7 +92,7 @@ void SplitData(const Corpus &c, double value, Corpus* train, Corpus* test) {
   train->num_terms = c.num_terms;
   train->docs.reserve(c.Len());
   test->docs.reserve(c.Len());
-  for (int i = 0; i < c.Len(); i++) {
+  for (size_t i = 0; i < c.Len(); i++) {
     if(Random1() < value) {
       train->docs.push_back(c.docs[i]);
     } else {

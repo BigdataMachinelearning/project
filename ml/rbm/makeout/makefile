@@ -5,6 +5,7 @@ WorkDir:=$(BaseDir)/ml/rbm
 name:=rbm_unittest
 $(name)_update_dep:=\
   repsoftmax.o\
+  probability.o\
   ais.o
 $(name)_remain_dep:=\
   rbm.o\

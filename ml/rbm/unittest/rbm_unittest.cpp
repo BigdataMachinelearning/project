@@ -137,6 +137,14 @@ TEST(Ais, AisTest) {
   LOG(INFO) << Probability(corpus.docs[0], run, beta, rep);
 }
 
+TEST(Ais, LogPartitionTest) {
+  RepSoftMax rep;
+  EyeRep(1, 2, &rep);
+  VReal tmp;
+  Push(3, 2, &tmp);
+  Push(3, 6, &tmp);
+  EXPECT_DOUBLE_EQ(::LogPartition(tmp), LogPartition(2, 2, rep));
+}
 } // namespace ml
 
 int main(int argc, char* argv[]) {

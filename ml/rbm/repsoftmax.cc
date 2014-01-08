@@ -95,7 +95,7 @@ void SampleV(const Document &doc, const VReal &h, const RepSoftMax &rbm,
                                                         VInt* v) {
   VReal expect(doc.words.size());
   ExpectV(doc, h, rbm, &expect);
-  for (int i = 0; i < doc.total; ++i) {
+  for (size_t i = 0; i < doc.total; ++i) {
     v->at(Random(expect))++;
   }
 }
@@ -151,7 +151,7 @@ void RBMLearning(const Corpus &corpus, int itern, RepSoftMax* rep) {
   // rep->w[0][2] = -0.5;
   for(int k = 0; k < itern; ++k) {
     result.clear();
-    for(int i = 0; i < corpus.Len(); ++i) {
+    for(size_t i = 0; i < corpus.Len(); ++i) {
     // for(int i = 0; i < 1; ++i) {
       // LOG_IF(INFO, i % 500 == 0) << k << " " << i;
       count++;
@@ -191,7 +191,7 @@ void RBMLearning2(const Corpus &corpus, int itern, RepSoftMax* rep) {
   result.reserve(corpus.Len());
   for(int k = 0; k < itern; ++k) {
     result.clear();
-    for(int i = 0; i < corpus.Len(); ++i) {
+    for(size_t i = 0; i < corpus.Len(); ++i) {
       LOG(INFO) << i;
       count++;
       VReal h1;
@@ -222,7 +222,7 @@ void RepSoftmaxTest(const RepSoftMax &rbm, const Corpus &corpus,
                                            Real partition_fc) {
   VReal PVHs;
   PVHs.reserve(corpus.Len());
-  for (int i = 0; i < corpus.Len(); ++i) {
+  for (size_t i = 0; i < corpus.Len(); ++i) {
     VReal h1;
     SampleH(corpus.docs[i], rbm, &h1);
     const VInt &words = corpus.docs[i].words;
