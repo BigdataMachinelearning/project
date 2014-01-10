@@ -5,9 +5,10 @@ cmd="
   ./makeout/rbm_app.o
   --eta=0.001
   --eta=0.01
+  --beta_beg=0.25
   --bach_size=2
   --k=2
-  --it_num=200
+  --it_num=10
   --type=eigen
   --type=stl
   --type=softmax
@@ -15,7 +16,7 @@ cmd="
   --train_path=../data/document_demo
   --train_path=test
   --algorithm_type=1
-  --ais_run=200
+  --ais_run=1
   "
 gdb="
   gdb ./makeout/rbm_app.o
@@ -23,4 +24,3 @@ gdb="
 
 exec $cmd
 #exec $gdb
-

@@ -13,7 +13,7 @@
 #include <Eigen/Dense>
 
 DEFINE_double(eta, 0.1, "learning rate");
-DEFINE_int32(beta, 50, "beta");
+DEFINE_double(beta_beg, 0.5, "beta");
 DEFINE_int32(ais_run, 2000, "ais sample time");
 
 DEFINE_int32(bach_size, 100, "bach size");
@@ -72,6 +72,7 @@ void App3() {
   Corpus corpus;
   corpus.LoadData(FLAGS_train_path);
   // corpus.RandomOrder();
+  /*
   RepSoftMax rep;
   rep.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
   if (FLAGS_algorithm_type == 1) {
@@ -79,10 +80,16 @@ void App3() {
   } else {
     RBMLearning2(corpus, FLAGS_it_num, &rep);
   }
+  */
+  RepSoftMax rep;
+  rep.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
+  // Init(2, 1, &(rep.b));
   VReal beta;
-  Range(0.0001, 1, 0.0001, &beta);
+  Range(0, 1, FLAGS_beta_beg, &beta);
   LOG(INFO) << Likelihood(corpus.docs[0], FLAGS_ais_run, beta, rep);
-  LOG(INFO) << LogPartition(corpus.TLen(0), corpus.ULen(0), rep);
+  RepSoftMax tmp;
+  Multiply(rep, beta[0], &tmp);
+  LOG(INFO) << LogPartition(corpus.TLen(0), corpus.ULen(0), tmp);
 }
 } // namespace ml
 

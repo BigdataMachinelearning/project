@@ -21,11 +21,11 @@ include post_unittest_makefile
 
 name:=rbm_app
 $(name)_update_dep:=\
-  repsoftmax.o\
-  util.o\
-  ais.o\
-  rbm_util.o
+  ais.o
 $(name)_remain_dep:=\
+  rbm_util.o\
+  util.o\
+  repsoftmax.o\
   probability.o\
   join.o\
   rbm2.o\

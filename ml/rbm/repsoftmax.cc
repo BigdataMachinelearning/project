@@ -258,20 +258,4 @@ void EyeRep(int f, int k, RepSoftMax* rep) {
   Init(k, 1, &(rep->b));
   Init(f,1, &(rep->c));
 }
-/*
-void CD(const Document &doc, const RepSoftMax &rbm, int step, VInt* v) {
-  VReal h1;
-  SampleH(doc, rbm, &h1);
-  SampleV(doc, h1, rbm, v);
-  VReal h2;
-  VInt r(v->size());
-  for (int i = 1; i < step; i++) {
-    h2.clear();
-    ExpectH(doc.words, *v, rbm, &h2);
-    SampleV(doc, h2, rbm, v);
-    Add(*v, &r);
-  }
-  LOG(INFO) << CrossEntropy(r, doc.counts);
-}
-*/
 } // namespace ml
