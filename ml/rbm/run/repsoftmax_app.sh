@@ -16,7 +16,7 @@ cmd="
   --train_path=../data/document_demo
   --train_path=test
   --algorithm_type=1
-  --ais_run=1
+  --ais_run=20
   "
 gdb="
   gdb ./makeout/rbm_app.o

@@ -62,12 +62,13 @@ void UniformSample(const Document &doc, VInt* v) {
 double WAis(const Document &doc, int runs, const VReal &beta,
                                            const RepSoftMax &rbm) {
   double sum = 0.0;
+  VReal s;
   for(int k = 0; k < runs; ++k) {
     VInt v1(rbm.b.size());
     UniformSample(doc, &v1);// uniform shoud in the document
     double wais = 1;
-    VReal s;
-    for(size_t i = 0; i < beta.size() - 1; ++i) {
+    // for(size_t i = 0; i < beta.size() - 1; ++i) {
+    for(size_t i = 0; i < 1; ++i) {
       RepSoftMax tmp;
       Multiply(rbm, beta[i], &tmp);
       VReal h;
@@ -78,12 +79,12 @@ double WAis(const Document &doc, int runs, const VReal &beta,
       double a = Potential(doc.TLen(), v2, beta[i + 1], rbm) /
                  Potential(doc.TLen(), v2, beta[i], rbm);
       wais *= a;
-      s.push_back(a);
       v1.swap(v2);
     }
-    LOG(INFO) << Join(s, " ");
+    s.push_back(wais);
     sum += wais;
   }
+  LOG(INFO) << Join(s, " ");
   return sum / runs;
 }
 
