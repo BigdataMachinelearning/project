@@ -19,6 +19,7 @@ void ExpectV(const Document &doc, const VReal &h, const RepSoftMax &rep,
     arr[k] += rep.b[doc.words[k]];
     arr[k] += (1 - beta) * rep.b.size();
   }
+  LOG(INFO) << Join(arr, " ");
   ml::Softmax(arr, v);
 }
 
@@ -36,7 +37,8 @@ double Potential(double len, const VInt &v, double beta, const RepSoftMax &rbm) 
   for (size_t f = 0; f < rbm.c.size(); ++f) {
     double sum = InnerProd(rbm.w[f], v);
     sum += len * rbm.c[f];
-    result *= (1 + exp(1 - beta + sum * beta));
+    result *= (1 + exp(sum * beta));
+    result *= (1 - beta);
   }
   return result;
 }
@@ -44,7 +46,7 @@ double Potential(double len, const VInt &v, double beta, const RepSoftMax &rbm) 
 void Multiply(const RepSoftMax &src, double beta, RepSoftMax* des) {
   des->Init(src.w.size(), src.w[0].size(), src.bach_size, src.momentum,
                                            src.eta);
-  ::Multiply(src.b, beta, &(des->b));
+  // ::Multiply(src.b, beta, &(des->b));
   ::Multiply(src.c, beta, &(des->c));
   ::Multiply(src.w, beta, &(des->w));
 }
@@ -62,7 +64,7 @@ double WAis(const Document &doc, int runs, const VReal &beta,
   double sum = 0.0;
   for(int k = 0; k < runs; ++k) {
     VInt v1(rbm.b.size());
-    UniformSample(doc, &v1);// uninform shoud in the document
+    UniformSample(doc, &v1);// uniform shoud in the document
     double wais = 1;
     VReal s;
     for(size_t i = 0; i < beta.size() - 1; ++i) {
@@ -87,7 +89,8 @@ double WAis(const Document &doc, int runs, const VReal &beta,
 
 double Likelihood(const Document &doc, int runs, const VReal &beta,
                                                  const RepSoftMax &rbm) {
-  double z = WAis(doc, runs, beta, rbm) * pow(2, rbm.c.size()) * rbm.b.size(); 
+  double z = WAis(doc, runs, beta, rbm) * pow(1 + exp(1),
+                                     rbm.c.size()) * rbm.b.size(); 
   LOG(INFO) << z <<  " " << pow(2, rbm.c.size()) << " " << rbm.b.size();
   LOG(INFO) << log(z);
   double p = Potential(doc.TLen(), doc.counts, 1, rbm);
