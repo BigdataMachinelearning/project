@@ -326,6 +326,16 @@ TEST(MathUtilTest, FactorialTEST) {
   EXPECT_DOUBLE_EQ(120, Factorial(5));
   EXPECT_DOUBLE_EQ(720, Factorial(6));
 }
+
+TEST(MathUtilTest, MultiNumTEST) {
+  VInt v;
+  v.push_back(2);
+  v.push_back(2);
+  EXPECT_DOUBLE_EQ(6, MultiNum(4, v));
+  v.push_back(2);
+  EXPECT_DOUBLE_EQ(90, MultiNum(6, v));
+}
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS(); 

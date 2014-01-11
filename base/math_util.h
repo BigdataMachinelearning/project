@@ -2,6 +2,7 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #ifndef BASE_MATH_UTIL_H_
 #define BASE_MATH_UTIL_H_
+#include "glog/logging.h"
 inline void Subtract(double m, VReal* v) {
   for (size_t i = 0; i < v->size(); i++) {
     v->at(i) -= m;
@@ -20,5 +21,13 @@ inline double Factorial(int n) {
     r *= i;
   }
   return r;
+}
+
+inline double MultiNum(int len, const VInt &v) {
+  double a = Factorial(len);
+  for (size_t i = 0; i < v.size(); i++) {
+    a /= Factorial(v[i]);
+  }
+  return a;
 }
 #endif  // BASE_MATH_UTIL_H_
