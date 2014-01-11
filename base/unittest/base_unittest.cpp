@@ -322,6 +322,10 @@ TEST(StlUtil, PushTEST) {
   EXPECT_EQ(1, v[1]);
 }
 
+TEST(MathUtilTest, FactorialTEST) {
+  EXPECT_DOUBLE_EQ(120, Factorial(5));
+  EXPECT_DOUBLE_EQ(720, Factorial(6));
+}
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS(); 
