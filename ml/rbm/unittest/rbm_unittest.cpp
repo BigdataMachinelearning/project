@@ -134,16 +134,36 @@ TEST(Ais, AisTest) {
   for (size_t i = 0; i < beta.size(); i++) {
     beta[i] = 0.1 * i;
   }
-  LOG(INFO) << Probability(corpus.docs[0], run, beta, rep);
+  LOG(INFO) << Likelihood(corpus.docs[0], run, beta, rep);
 }
 
 TEST(Ais, LogPartitionTest) {
   RepSoftMax rep;
-  EyeRep(1, 2, &rep);
-  VReal tmp;
-  Push(3, 2, &tmp);
-  Push(3, 6, &tmp);
+  ZeroRep(1, 2, &rep);
+  VReal tmp(4, 0);
   EXPECT_DOUBLE_EQ(::LogPartition(tmp), LogPartition(2, 2, rep));
+  OneRep(1, 2, &rep);
+  tmp.clear();
+  Push(2, 1, &tmp);
+  Push(2, 4, &tmp);
+  EXPECT_DOUBLE_EQ(::LogPartition(tmp), LogPartition(2, 2, rep));
+}
+
+TEST(Ais, WAisTest) {
+  Corpus corpus;
+  corpus.LoadData("test");
+  RepSoftMax rep;
+  int f_size = 1;
+  int v_size = 2;
+  double value = 0;
+  InitRep(f_size, v_size, value, &rep);
+  VReal beta;
+  Range(0, 1, 0.01, &beta);
+  int ais_run = 10;
+  double wais = WAis(corpus.docs[0], ais_run, beta, rep);
+  double z = wais * pow(2, rep.c.size()) * rep.b.size(); 
+  double p = LogPartition(corpus.TLen(0), corpus.ULen(0), rep);
+  EXPECT_DOUBLE_EQ(z, exp(p));
 }
 } // namespace ml
 

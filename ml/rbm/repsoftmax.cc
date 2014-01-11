@@ -253,9 +253,21 @@ void RepSoftmaxTest(const RepSoftMax &rbm, const Corpus &corpus,
   WriteStrToFile(Join(PVHs,"\n"), "test.txt");
 }
 
-void EyeRep(int f, int k, RepSoftMax* rep) {
+void OneRep(int f, int k, RepSoftMax* rep) {
   Init(f, k, 1, &(rep->w));
   Init(k, 1, &(rep->b));
   Init(f,1, &(rep->c));
+}
+
+void ZeroRep(int f, int k, RepSoftMax* rep) {
+  Init(f, k, 0, &(rep->w));
+  Init(k, 0, &(rep->b));
+  Init(f, 0, &(rep->c));
+}
+
+void InitRep(int f, int k, double value, RepSoftMax* rep) {
+  Init(f, k, value, &(rep->w));
+  Init(k, value, &(rep->b));
+  Init(f, value, &(rep->c));
 }
 } // namespace ml
