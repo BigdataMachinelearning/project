@@ -11,8 +11,8 @@ cmd="
   --gtest_filter=RepSoftmaxTest.AisTest
   --gtest_filter=AisTest.UniformSampleTest
   --gtest_filter=Ais.AisTest
-  --gtest_filter=Ais.LogPartitionTest
   --gtest_filter=Ais.WAisTest
+  --gtest_filter=Ais.LogPartitionTest
   "
 gdb="
   gdb ./makeout/rbm_unittest.o

@@ -34,7 +34,7 @@ void SampleV(const Document &doc, const VReal &h, const RepSoftMax &rbm,
 double Potential(double len, const VInt &v, double beta, const RepSoftMax &rbm) {
   double result = 1;
   for (size_t f = 0; f < rbm.c.size(); ++f) {
-    result *= (1 + exp(beta * (InnerProd(rbm.w[f], v) + len * rbm.c[f])));
+    result *= (1 + exp(beta * (::InnerProd(rbm.w[f], v) + len * rbm.c[f])));
   }
   result *= exp((1 - beta) * len * log(1.0/ rbm.b.size()));
   return result;
@@ -111,8 +111,8 @@ double LogPartition(int doc_len, int word_num, const RepSoftMax &rep) {
   for (size_t i = 0; i < v.size(); i++) {
     do {
       double sum = 0;
-      sum += Quadratic(h, v[i], rep.w);
-      sum += doc_len * InnerProd(h, rep.c);
+      sum += ::Quadratic(h, v[i], rep.w);
+      sum += doc_len * ::InnerProd(h, rep.c);
       sum += InnerProd(v[i], rep.b);
       m_energy.push_back(sum);
     } while (NextBinarySeq(&h));
@@ -127,16 +127,16 @@ double LogMultiPartition(int doc_len, int word_num, const RepSoftMax &rep) {
   VReal m_energy;
   VInt multi_num;
   do {
-    multi_num.push_back(MultiNum(v));
     do {
+      multi_num.push_back(MultiNum(doc_len, v));
       double sum = 0;
       sum += Quadratic(h, v, rep.w);
       sum += doc_len * InnerProd(h, rep.c);
       sum += InnerProd(v, rep.b);
+      sum += log(1.0 / rep.b.size()) * doc_len;
       m_energy.push_back(sum);
     } while (NextBinarySeq(&h));
   } while (NextMultiSeq(&v));
-  LOG(INFO) << Join(multi_num, " ");
-  return ::LogPartition(m_energy);
+  return ::LogPartition(multi_num, m_energy);
 }
 } // namespace ml

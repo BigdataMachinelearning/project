@@ -137,16 +137,18 @@ TEST(Ais, AisTest) {
   LOG(INFO) << Likelihood(corpus.docs[0], run, beta, rep);
 }
 
+// test Partition = 2^F
 TEST(Ais, LogPartitionTest) {
   RepSoftMax rep;
-  ZeroRep(1, 2, &rep);
-  VReal tmp(4, 0);
-  EXPECT_DOUBLE_EQ(::LogPartition(tmp), LogPartition(2, 2, rep));
-  OneRep(1, 2, &rep);
-  tmp.clear();
-  Push(2, 1, &tmp);
-  Push(2, 4, &tmp);
-  EXPECT_DOUBLE_EQ(::LogPartition(tmp), LogPartition(2, 2, rep));
+  int size_f = 1;
+  int size_v = 2;
+  ZeroRep(size_f, size_v, &rep);
+  int doc_len = 2;
+  int word_num = 2;
+  EXPECT_DOUBLE_EQ(2, exp(LogMultiPartition(doc_len, word_num, rep)));
+  size_f = 2;
+  ZeroRep(size_f, size_v, &rep);
+  EXPECT_DOUBLE_EQ(4, exp(LogMultiPartition(doc_len, word_num, rep)));
 }
 
 TEST(Ais, WAisTest) {

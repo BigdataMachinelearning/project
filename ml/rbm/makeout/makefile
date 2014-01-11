@@ -36,8 +36,8 @@ $(name)_remain_dep:=\
   $(GTestDir)/gtest-all.o
 include post_app_makefile
 
-name:=rbm_unittest
 name:=rbm_app
+name:=rbm_unittest
 include main_makefile
 
 include update
