@@ -84,14 +84,17 @@ void App3() {
   RepSoftMax rep;
   // rep.Init(FLAGS_k, corpus.num_terms, FLAGS_bach_size, 1, FLAGS_eta);
   int size_v = 2;
+  // InitRep(FLAGS_k, size_v, 0.1, &rep);
   InitRep(FLAGS_k, size_v, 0.1, &rep);
   VReal beta;
   Range(0, 1, FLAGS_beta_beg, &beta);
   double l = Likelihood(corpus.docs[0], FLAGS_ais_run, beta, rep);
   RepSoftMax tmp;
-  Multiply(rep, beta[0], &tmp);
+  LOG(INFO) << beta[1];
+  Multiply(rep, beta[1], &tmp);
   // double p = LogPartition(corpus.TLen(0), corpus.ULen(0), tmp);
-  double p = LogMultiPartition(corpus.TLen(0), corpus.ULen(0), tmp);
+  double beta_a = 1;
+  double p = LogMultiPartition(corpus.TLen(0), corpus.ULen(0), beta_a, rep);
   LOG(INFO) << p << " real:" << exp(p);
 }
 } // namespace ml

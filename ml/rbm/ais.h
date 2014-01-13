@@ -16,6 +16,6 @@ double LogPartition(int doc_len, int word_num, const RepSoftMax &rep);
 void Multiply(const RepSoftMax &src, double beta, RepSoftMax* des); 
 double WAis(const Document &doc, int runs, const VReal &beta,
                                            const RepSoftMax &rbm);
-double LogMultiPartition(int doc_len, int word_num, const RepSoftMax &rep);
+double LogMultiPartition(int doc_len, int word_num, double beta, const RepSoftMax &rep);
 }; // namespace ml
 #endif // ML_RBM_AIS_H_

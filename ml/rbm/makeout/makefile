@@ -21,13 +21,13 @@ include post_unittest_makefile
 
 name:=rbm_app
 $(name)_update_dep:=\
+  join.o\
   ais.o
 $(name)_remain_dep:=\
   rbm_util.o\
   util.o\
   repsoftmax.o\
   probability.o\
-  join.o\
   rbm2.o\
   rbm.o\
   string_util.o\
@@ -36,8 +36,8 @@ $(name)_remain_dep:=\
   $(GTestDir)/gtest-all.o
 include post_app_makefile
 
-name:=rbm_app
 name:=rbm_unittest
+name:=rbm_app
 include main_makefile
 
 include update

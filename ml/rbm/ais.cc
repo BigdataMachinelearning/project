@@ -36,13 +36,13 @@ double Potential(double len, const VInt &v, double beta, const RepSoftMax &rbm) 
   for (size_t f = 0; f < rbm.c.size(); ++f) {
     result *= (1 + exp(beta * (::InnerProd(rbm.w[f], v) + len * rbm.c[f])));
   }
-  result *= exp((1 - beta) * len * log(1.0/ rbm.b.size()));
+  result *= exp(-(1 - beta) * len * log(rbm.b.size()));
+  result *= exp(beta * ::InnerProd(v, rbm.b));
   return result;
 }
 
 void Multiply(const RepSoftMax &src, double beta, RepSoftMax* des) {
-  des->Init(src.w.size(), src.w[0].size(), src.bach_size, src.momentum,
-                                           src.eta);
+  des->Init(src.c.size(), src.b.size(), src.bach_size, src.momentum, src.eta);
   ::Multiply(src.b, beta, &(des->b));
   ::Multiply(src.c, beta, &(des->c));
   ::Multiply(src.w, beta, &(des->w));
@@ -64,8 +64,8 @@ double WAis(const Document &doc, int runs, const VReal &beta,
     VInt v1(rbm.b.size());
     UniformSample(doc, &v1);// uniform shoud in the document
     double wais = 1;
-    // for(size_t i = 0; i < beta.size() - 1; ++i) {
-    for(size_t i = 0; i < 1; ++i) {
+    for(size_t i = 0; i < beta.size() - 1; ++i) {
+    // for(size_t i = 0; i < 1; ++i) {
       RepSoftMax tmp;
       Multiply(rbm, beta[i], &tmp);
       VReal h;
@@ -74,21 +74,19 @@ double WAis(const Document &doc, int runs, const VReal &beta,
       SampleV(doc, h, tmp, beta[i], &v2);
       double a = Potential(doc.TLen(), v2, beta[i + 1], rbm) /
                  Potential(doc.TLen(), v2, beta[i], rbm);
-      if (i == 0) {
-        s.push_back(a);
-      }
+      s.push_back(a);
       wais *= a;
       v1.swap(v2);
     }
     sum += wais;
   }
-  LOG(INFO) << Join(s, " ");
   return sum / runs;
 }
 
 double Likelihood(const Document &doc, int runs, const VReal &beta,
                                                  const RepSoftMax &rbm) {
   double wais = WAis(doc, runs, beta, rbm);
+  LOG(INFO) << wais;
   double z = wais * pow(2, rbm.c.size()); 
   LOG(INFO) << z;
   double p = Potential(doc.TLen(), doc.counts, 1, rbm);
@@ -120,7 +118,7 @@ double LogPartition(int doc_len, int word_num, const RepSoftMax &rep) {
   return ::LogPartition(m_energy);
 }
 
-double LogMultiPartition(int doc_len, int word_num, const RepSoftMax &rep) {
+double LogMultiPartition(int doc_len, int word_num, double beta, const RepSoftMax &rep) {
   VInt v(rep.b.size());
   v[0] = doc_len;
   VInt h(rep.c.size(), 0);
@@ -133,10 +131,12 @@ double LogMultiPartition(int doc_len, int word_num, const RepSoftMax &rep) {
       sum += Quadratic(h, v, rep.w);
       sum += doc_len * InnerProd(h, rep.c);
       sum += InnerProd(v, rep.b);
-      sum += log(1.0 / rep.b.size()) * doc_len;
+      sum -= log(rep.b.size()) * doc_len * (1 - beta);
       m_energy.push_back(sum);
     } while (NextBinarySeq(&h));
   } while (NextMultiSeq(&v));
+  LOG(INFO) << Join(multi_num, " ");
+  LOG(INFO) << Join(m_energy, " ");
   return ::LogPartition(multi_num, m_energy);
 }
 } // namespace ml
