@@ -9,6 +9,26 @@
 #include "base/stl_util.h"
 #include "base/math_util.h"
 
+template <typename V, typename M>
+inline double Quadratic(const V &x, const V &y, const M &w) {
+  double sum = 0;
+  for (size_t i = 0; i < x.size(); ++i) {
+    for (size_t j = 0; j < y.size(); ++j) {
+      sum += x[i] * w[i][j] * y[j];
+    }
+  }
+  return sum;
+}
+
+template <typename V1, typename V2>
+inline double InnerProd(const V1 &x, const V2 &y) {
+  double sum = 0;
+  for (size_t i = 0; i < x.size(); i++) {
+    sum += x[i] * y[i];
+  }
+  return sum;
+}
+
 inline double LogSum(double log_a, double log_b) {
   double v;
   if (log_a < log_b) {
@@ -25,6 +45,14 @@ inline double LogPartition(const VReal &data) {
   Subtract(m, &tmp);
   Exp(&tmp);
   return m + log(Sum(tmp));
+}
+
+inline double LogPartition(const VInt &num, const VReal &data) {
+  double m = Max(data);
+  VReal tmp(data);
+  Subtract(m, &tmp);
+  Exp(&tmp);
+  return m + log(InnerProd(num, tmp));
 }
 
 /**

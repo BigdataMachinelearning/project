@@ -17,7 +17,6 @@ void ExpectV(const Document &doc, const VReal &h, const RepSoftMax &rep,
       arr[k] += rep.w[f][doc.words[k]] * h[f];
     }
     arr[k] += rep.b[doc.words[k]];
-    arr[k] += (1 - beta) * rep.b.size();
   }
   ml::Softmax(arr, v);
 }
@@ -135,8 +134,6 @@ double LogMultiPartition(int doc_len, int word_num, double beta, const RepSoftMa
       m_energy.push_back(sum);
     } while (NextBinarySeq(&h));
   } while (NextMultiSeq(&v));
-  LOG(INFO) << Join(multi_num, " ");
-  LOG(INFO) << Join(m_energy, " ");
   return ::LogPartition(multi_num, m_energy);
 }
 } // namespace ml

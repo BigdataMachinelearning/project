@@ -24,7 +24,7 @@ template <typename It>
 Str Join(It beg, It end, StrC &del) {
   VStr tmp;
   for (It it = beg; it != end; ++it) {
-    tmp.push_back(ToStr(*it, 5));
+    tmp.push_back(ToStr(*it, 7));
   }
   return Join(tmp, del);
 }

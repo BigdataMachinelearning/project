@@ -5,7 +5,7 @@ cmd="
   ./makeout/rbm_app.o
   --eta=0.001
   --eta=0.01
-  --beta_beg=0.11
+  --beta_beg=0.001
   --bach_size=2
   --k=1
   --it_num=10

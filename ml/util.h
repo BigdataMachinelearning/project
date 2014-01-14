@@ -26,8 +26,5 @@ double Var(const VVVReal &v);
 double Mean(const VReal &v);
 double Mean(const VVReal &v);
 double Mean(const VVVReal &v);
-
-double Quadratic(const VReal &lhs, const VReal &rhs, const VVReal &w);
-double InnerProd(const VReal &lhs, const VReal &rhs);
 } // namespace ml
 #endif // ML_UTIL_H_

@@ -93,6 +93,15 @@ TEST(Stat, LogParitionTest) {
   e.push_back(4);
   e.push_back(6);
   EXPECT_DOUBLE_EQ(log(exp(6) + exp(4)), LogPartition(e));
+  VInt v;
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(1);
+  e.clear();
+  e.push_back(0);
+  e.push_back(0);
+  e.push_back(0);
+  EXPECT_DOUBLE_EQ(4, exp(LogPartition(v, e)));
 }
 
 TEST(Stat, TriGammaTest) {
@@ -197,14 +206,14 @@ TEST(Base, SquareTEST) {
   EXPECT_LT(std::abs(Square(a) - 4), 0.001);
 }
 
-TEST(StatTest, ProbabilityTEST) {
+TEST(Stat, ProbabilityTEST) {
   VReal v(4, 1.0);
   VReal v2;
   Probability(v, &v2);
   EXPECT_LT(std::abs(v2.at(0) - 0.25), 0.001);
 }
 
-TEST(StatTest, ExpectTEST) {
+TEST(Stat, ExpectTEST) {
   VReal v;
   v.push_back(1);
   v.push_back(2);
@@ -334,6 +343,35 @@ TEST(MathUtilTest, MultiNumTEST) {
   EXPECT_DOUBLE_EQ(6, MultiNum(4, v));
   v.push_back(2);
   EXPECT_DOUBLE_EQ(90, MultiNum(6, v));
+}
+
+TEST(Stat, QuadraticTest) {
+  VReal lhs(2);
+  lhs[0] = 1;
+  lhs[1] = 2;
+  VReal rhs(3);
+  rhs[0] = 3;
+  rhs[1] = 4;
+  rhs[2] = 5;
+  VVReal w;
+  Init(lhs.size(), rhs.size(), 0, &w);
+  w[0][0] = 1;
+  w[0][1] = 2;
+  w[0][2] = 3;
+  w[1][0] = 4;
+  w[1][1] = 5;
+  w[1][2] = 6;
+  EXPECT_DOUBLE_EQ(150, Quadratic(lhs, rhs, w));
+}
+
+TEST(Stat, InnerProdTest) {
+  VReal lhs(2);
+  lhs[0] = 1;
+  lhs[1] = 2;
+  VReal rhs(2);
+  rhs[0] = 3;
+  rhs[1] = 4;
+  EXPECT_DOUBLE_EQ(11, InnerProd(lhs, rhs));
 }
 
 int main(int argc, char* argv[]) {
