@@ -10,9 +10,13 @@ void LoadMovieLen(const Str &name, User* user) {
   ReadFileToStr(name, &str);
   VStr vec;
   SplitStr(str, "\n", &vec);
-  for(VStr::size_type i = 0; i < vec.size(); i++) {
+  for(size_t i = 0; i < vec.size(); i++) {
     VStr terms;
     SplitStr(vec.at(i), " ", &terms);
+    if (terms.size() < 2) {
+      terms.clear();
+      SplitStr(vec.at(i), "\t", &terms);
+    }
     if(terms.size() >= 3) {
       size_t id = static_cast<size_t>(StrToInt(terms[0]));
       if(id >= user->item.size()) {
@@ -119,16 +123,23 @@ double RBMTest(const User &train, const User &test, const ml2::RBM &rbm) {
 
 void ReadData(const Str &path, int rows, int cols, SpMat *mat) {
   FILE *fin = fopen(path.c_str(), "r");
-  int u, v; float r;
-  int m = 0, n = 0;
+  int u;
+  int v;
+  float r;
+  int m = 0;
+  int n = 0;
   std::vector<T> tripletList;
-  while(fscanf(fin, "%d %d %f", &u, &v, &r)>0){
+  while(fscanf(fin, "%d %d %f", &u, &v, &r) > 0) {
     tripletList.push_back(T(v, u, r));
     m = u > m ? u : m;
     n = v > n ? v : n;
   }
-  if (rows == 0) rows = n + 1;
-  if (cols == 0) cols = m + 1;
+  if (rows == 0) { 
+    rows = n + 1;
+  }
+  if (cols == 0) {
+    cols = m + 1;
+  }
   mat->resize(rows, cols);
   mat->setFromTriplets(tripletList.begin(), tripletList.end());
 }
@@ -163,5 +174,4 @@ void Convert(const std::vector<MatrixXd> &src, VVVReal* des) {
     }
   }
 }
-
 }  // namespace ml

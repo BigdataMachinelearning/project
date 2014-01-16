@@ -4,32 +4,32 @@ WorkDir:=$(BaseDir)/ml/rbm
 
 name:=rbm_unittest
 $(name)_update_dep:=\
+  rbm2.o\
+  rbm_util.o\
+  rbm.o
+$(name)_remain_dep:=\
   repsoftmax.o\
   probability.o\
-  ais.o
-$(name)_remain_dep:=\
-  rbm.o\
   base.o\
-  rbm_util.o\
   document.o\
   util.o\
-  rbm2.o\
   join.o\
   string_util.o\
+  ais.o\
   $(GTestDir)/gtest-all.o
 include post_unittest_makefile
 
 name:=rbm_app
 $(name)_update_dep:=\
+  rbm_util.o\
+  rbm.o\
+  rbm2.o\
   join.o\
   ais.o
 $(name)_remain_dep:=\
-  rbm_util.o\
   util.o\
   repsoftmax.o\
   probability.o\
-  rbm2.o\
-  rbm.o\
   string_util.o\
   document.o\
   base.o\

@@ -1,132 +1,160 @@
-// Copyright 2013 lijiankou. All Rights Reserved.
-// Author: lijk_start@163.com (Jiankou Li)
+// Copyright 2013 zhangw. All Rights Reserved.
+// Author: zhangw@ios.ac.cn (Wei Zhang)
 #include "ml/rbm/rbm.h"
+
+#include "base/base_head.h"
 #include "ml/rbm/rbm_util.h"
+#include "ml/eigen.h"
 #include "ml/util.h"
-namespace ml2 {
-void RBM::Init(int f, int m, int k, int bach, double momentum_, double eta_) {
-  ml::RandomInit(f, m, k, &w1);
-  ml::RandomInit(m, k, &b1);
-  ml::RandomInit(f, &c1);
-  InitZero();
-  momentum = momentum_;
-  eta = eta_;
-  bach_size = bach;
+namespace ml {
+RBM::RBM(const SpMat &train, int nv, int nh, int nsoftmax){
+   W.resize(nsoftmax);
+   dW.resize(nsoftmax);
+   for(size_t i=0; i<W.size(); ++i){
+     W[i].resize(nh, nv);
+     dW[i].resize(nh, nv);
+     RandomInit(&W[i]);
+   }
+
+   VVVReal tmp;
+   Convert(W, &tmp);
+   LOG(INFO) << Var(tmp);
+   LOG(INFO) << Mean(tmp);
+   bv.resize(nsoftmax, nv);
+   dv.resize(nsoftmax, nv);
+   RandomInit(&bv);
+
+   bh.resize(nh);
+   dh.resize(nh);
+   bh.setZero();
+
+   v0.resize(nv);
+   h0.resize(nh);
+   vk.resize(nv);
+   hk.resize(nh);
 }
 
-void RBM::InitZero() {
-  dw.clear();
-  db.clear();
-  dc.clear();
-  ::Init(w1.size(), w1[0].size(), w1[0][0].size(), 0.0, &dw);
-  ::Init(b1.size(), b1[0].size(), 0.0, &db);
-  ::Init(c1.size(), 0.0, &dc);
+void RBM::ExpectV(const EVec &h, const SpVec &t, VVReal* des) {
+  for (SpVec::InnerIterator it(t); it; ++it){
+    VReal a(W.size());
+    for(size_t k = 0; k < W.size(); ++k) {
+      a[k] = bv(k, it.index()) +  W[k].col(it.index()).dot(h);
+    }
+    VReal b(W.size());
+    ml::Softmax(a, &b);
+    des->push_back(b);
+  }
 }
 
-void Update(RBM* rbm) {
-  double eta = rbm->eta / rbm->bach_size;
-  for (size_t m = 0; m < rbm->w1[0].size(); m++) {
-    for (size_t k = 0; k < rbm->w1[0][0].size(); k++) {
-      rbm->b1[m][k] += eta * rbm->db[m][k];
-      for (size_t f = 0; f < rbm->w1.size(); f++) {
-        rbm->w1[f][m][k] += eta * rbm->dw[f][m][k];
+void RBM::ExpectRating(const EVec &h, const SpVec &t, SpVec *v) {
+  v->setZero();
+  VVReal vec;
+  ExpectV(h, t, &vec);
+  int i = 0;
+  for (SpVec::InnerIterator it(t); it; ++it, ++i){
+    v->insert(it.index()) = ml::ExpectRating(vec[i]);
+  }
+}
+
+void RBM::SampleV(const EVec &h, const SpVec &t, SpVec *v) {
+  v->setZero();
+  VVReal vec;
+  ExpectV(h, t, &vec);
+  int i = 0;
+  for (SpVec::InnerIterator it(t); it; ++it, ++i){
+    v->insert(it.index()) = ml::Sample(vec[i]);
+  }
+}
+
+void RBM::ExpectH(const SpVec &v, EVec *h) {
+  for (int j = 0; j < h->rows(); ++j) {
+    double s = 0;
+    for (SpVec::InnerIterator it(v); it; ++it) {
+      s += W[it.value() - 1](j, it.index());
+    }
+    s += bh[j];
+    (*h)[j] = Sigmoid(s);
+  }
+}
+
+void RBM::SampleH(const SpVec &v, EVec *h) {
+  ExpectH(v, h);
+  ::Sample(h);
+}
+
+void RBM::PartGrad(const SpVec &v, const EVec &h, double coeff){
+  for (SpVec::InnerIterator it(v); it; ++it) {
+    dv(it.value() - 1, it.index()) += coeff;
+    for (int j = 0; j < h.rows(); ++j) {
+      dW[it.value() - 1](j, it.index()) += coeff * h[j];
+    }
+  }
+  for (int j = 0; j < h.rows(); ++j) {
+    dh(j) += coeff * h[j];
+  }
+}
+
+void RBM::InitGradient(){
+  for(size_t k = 0; k < dW.size(); ++k) {
+    dW[k].setZero();
+  }
+  dh.setZero();
+  dv.setZero();
+}
+
+void RBM::UpdateGradient(double alpha, int batch_size) {
+  double r = alpha / batch_size;
+  for(size_t k = 0; k < dW.size(); ++k) {
+    W[k] += r * dW[k];
+  }
+  bh += r * dh;
+  bv += r * bv;
+}
+
+void RBM::Gradient(const SpVec &x, int step) {
+  SampleH(x, &h0);
+  SampleV(h0, x, &vk);
+  for (int k = 0; k < step - 1; ++k) {
+    SampleH(vk, &hk);
+    SampleV(hk, x, &vk);
+  }
+  ExpectH(vk, &hk);
+  PartGrad(x,  h0, 1);
+  PartGrad(vk, hk, -1);
+}
+
+void RBM::Train(const SpMat &train, const SpMat &test, int niter, double alpha,
+                                                       int batch_size) {
+  InitGradient();
+  int curr_samples = 0;
+  int nCD = 0;
+  for (int i = 0; i < niter; ++i) {
+    Count.clear();
+    if (i % 50 == 0) {
+      nCD++;
+    }
+    for (int n = 0; n < train.cols(); n++) {
+      Gradient(train.col(n), nCD);
+      curr_samples++;
+      if(curr_samples == batch_size) {
+        UpdateGradient(alpha, batch_size);
+        curr_samples = 0;
+        InitGradient();
       }
     }
-  }
-  for (VInt::size_type i = 0; i < rbm->c1.size(); i++) {
-    rbm->c1[i] += eta * rbm->dc[i];
-  }
-}
-
-void Gradient(const VInt &item, const VReal &h1, const VReal &v1,
-              const VReal &h2, const VReal &v2, RBM* rbm) {
-  for (size_t m = 0; m < item.size(); m++) {
-    if (v1[m] != v2[m]) {
-      rbm->db[item[m]][static_cast<int>(v1[m] - 1)] += 1;
-      rbm->db[item[m]][static_cast<int>(v2[m] - 1)] -= 1;
-    }
-    for (size_t f = 0; f < h1.size(); f++) {
-      if (v1[m] == v2[m]) {
-        rbm->dw[f][item[m]][static_cast<int>(v1[m] - 1)] += h1[f] - h2[f];
-      } else {
-        rbm->dw[f][item[m]][static_cast<int>(v1[m] - 1)] += h1[f];
-        rbm->dw[f][item[m]][static_cast<int>(v2[m] - 1)] -= h2[f];
-      }
-    }
-  }
-  for (VInt::size_type i = 0; i < h1.size(); i++) {
-    rbm->dc[i] += h1.at(i) - h2.at(i);
+    LOG(INFO) << i << " " << 
+              Predict(train, train) << " " << Predict(train, test);
   }
 }
 
-void ExpectV(const VInt &item, const VReal &h, const RBM &rbm, VVReal* v) {
-  v->resize(item.size());
-  for (size_t i = 0; i < item.size(); ++i) {
-    VReal arr(rbm.w1[0][0].size());
-    for (size_t k = 0; k < arr.size(); k++) {
-      arr[k] = 0;
-      for (size_t f = 0; f < h.size(); f++) {
-        arr[k] += rbm.w1[f][item[i]][k] * h[f];
-      }
-      arr[k] += rbm.b1[item[i]][k];
-    }
-    v->at(i).resize(arr.size());
-    ml::Softmax(arr, &(v->at(i)));
+double RBM::Predict(const SpMat &train, const SpMat &test) {
+  double rmse = 0;
+  for(int n = 0; n < train.cols(); n++) {
+    ExpectH(train.col(n), &h0);
+    ExpectRating(h0, test.col(n), &v0);
+    v0 -= test.col(n);
+    rmse += v0.cwiseAbs2().sum();
   }
+  return sqrt(rmse/test.nonZeros());
 }
-
-void SampleV(const VInt &item, const VReal &h, const RBM &rbm, VReal* v) {
-  VVReal expect;
-  ExpectV(item, h, rbm, &expect);
-  v->resize(item.size());
-  for (VVReal::size_type i = 0; i < expect.size(); ++i) {
-    v->at(i) = Random(expect[i]) + 1;
-  }
-}
-
-void ExpectH(const VInt &item, const VReal &rating, const RBM &rbm, VReal* h) {
-  h->resize(rbm.c1.size());
-  for (size_t f = 0; f < h->size(); f++) {
-    double sum = 0.0;
-    for (size_t m = 0; m < rating.size(); ++m) {
-      sum += rbm.w1[f][item[m]][rating[m] - 1];
-    }
-    sum += rbm.c1[f];
-    h->at(f) = Sigmoid(sum);
-  }
-}
-
-void SampleH(const VInt &item, const VReal &rating, const RBM &rbm, VReal* h) {
-  ExpectH(item, rating, rbm, h);
-  for (size_t i = 0; i < h->size(); i++) {
-    h->at(i) = Sample1(h->at(i));
-  }
-}
-
-void RBMLearning(const User &train, const User &test, int iter_num, 
-                                    int bach_size, RBM* rbm) {
-  int sample = 0;
-  for (int i = 0; i < iter_num; i++) {
-    Time time;
-    time.Start();
-    for (size_t j = 1; j < train.item.size(); j++) {
-      sample++;
-      VReal h1;
-      SampleH(train.item[j], train.rating[j], *rbm, &h1);
-      VReal v2;
-      SampleV(train.item[j], h1, *rbm, &v2);
-      VReal h2;
-      ExpectH(train.item[j], v2, *rbm, &h2);
-      Gradient(train.item[j], h1, train.rating[j], h2, v2, rbm);
-      if (sample == bach_size) {
-        Update(rbm);
-        rbm->InitZero();
-        sample = 0;
-      }
-    }
-    double error = ml::RBMTest(train, test, *rbm);
-    LOG(INFO) << i << ":"  << error 
-        << " " << ml::RBMTest(train, train, *rbm) << " " << time.GetTime();
-  }
-}
-}  // namespace ml2
+} // namespace ml

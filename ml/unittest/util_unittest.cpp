@@ -2,6 +2,7 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/base_head.h"
 #include "ml/util.h"
+#include "ml/eigen.h"
 #include "gtest/gtest.h"
 
 namespace ml {

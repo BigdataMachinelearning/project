@@ -1,37 +1,32 @@
-// Copyright 2013 lijiankou. All Rights Reserved.
-// Author: lijk_start@163.com (Jiankou Li)
-#ifndef RBM_RBM_H_
-#define RBM_RBM_H_
-#include "base/base_head.h"
-namespace ml2 {
-struct User {
-  VVInt item;
-  VVReal rating;
+// Copyright 2013 zhangw. All Rights Reserved.
+// Author: zhangw@ios.ac.cn (Wei Zhang)
+#ifndef ML_RBM_RBM_
+#define ML_RBM_RBM_
+#include "ml/eigen.h"
+#include <vector>
+namespace ml {
+class RBM {
+ public:
+  RBM(const SpMat &train, int nv, int nh, int nsoftmax);
+  void Train(const SpMat &train, const SpMat &test, int niter,
+                                 double alpha, int batch_size);
+  double Predict(const SpMat &train, const SpMat &test);
+ public:
+  SpVec v0, vk;
+  EVec h0, hk;
+ private:
+  std::vector<EMat> W, dW;
+  EMat bv, dv;
+  EVec bh, dh;
+  void InitGradient();
+  void UpdateGradient(double alpha, int batch_size);
+  void ExpectH(const SpVec &v, EVec *h);
+  void SampleH(const SpVec &v, EVec *h);
+  void ExpectRating(const EVec &h, const SpVec &t, SpVec *v);
+  void ExpectV(const EVec &h, const SpVec &t, VVReal* des);
+  void SampleV(const EVec &h, const SpVec &t, SpVec *v);
+  void PartGrad(const SpVec &v, const EVec &h, double coeff);
+  void Gradient(const SpVec &x, int step);
 };
-
-struct RBM {
-  VVVReal w1;
-  VVReal b1;
-  VReal c1;
-  VVVReal dw;
-  VVReal db;
-  VReal dc;
-  double momentum;
-  double eta;
-  int bach_size;
-  void Init(int f, int m, int k, int bach, double momentum_, double eta_);
-  // void Init(int m, int f, int k, int bach_size, double momentum_, double eta_);
-  void InitZero();
-};
-
-void Update(const VInt &item, const VReal &h1, const VReal &v1, const VReal &h2,
-                              const VReal &v2, RBM* rbm);
-void RBMLearning(const User &train, const User &test, int iter_num, RBM* rbm);
-void RBMLearning(const User &train, const User &test, int iter_num, 
-                                    int bach_size, RBM* rbm);
-void ExpectV(const VInt &item, const VReal &h, const RBM &rbm, VVReal* v);
-void ExpectH(const VInt &item, const VReal &v, const RBM &rbm, VReal* h);
-void SampleV(const VInt &item, const VReal &h, const RBM &rbm, VReal* v);
-void SampleH(const VInt &item, const VReal &v, const RBM &rbm, VReal* h);
-}  // namespace ml
-#endif // RBM_RBM_H_
+} // namespace ml
+#endif // ML_RBM_RBM_

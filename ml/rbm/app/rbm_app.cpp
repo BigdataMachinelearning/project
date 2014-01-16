@@ -45,7 +45,7 @@ void App() {
   LOG(INFO) << MaxItemId(train);
   ml2::RBM rbm;
   InitMovieLen(&rbm);
-  RBMLearning(train, test, FLAGS_it_num, rbm.bach_size, &rbm);
+  RBMLearning(train, test, FLAGS_it_num, &rbm);
   // RBMTest(train, test, rbm);
 }
 
@@ -55,13 +55,11 @@ void App2() {
   }
   SpMat u_v;
   ReadData(FLAGS_train_path, 0, 0, &u_v);
-  SpMat v_u = u_v.transpose();
+  // SpMat v_u = u_v.transpose();
   SpMat test_u_v;
   ReadData(FLAGS_test_path, u_v.rows(), u_v.cols(), &test_u_v);
-  SpMat test_v_u = test_u_v.transpose();
-  int M = u_v.cols();
-  int N = u_v.rows();
-  RBM rbm(u_v, N, FLAGS_hidden, FLAGS_k);
+  // SpMat test_v_u = test_u_v.transpose();
+  RBM rbm(u_v, u_v.rows(), FLAGS_hidden, FLAGS_k);
   rbm.Train(u_v, test_u_v, 2000, FLAGS_eta, FLAGS_bach_size);
 }
 

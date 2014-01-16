@@ -12,16 +12,15 @@
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 namespace ml {
-/*
 TEST(RBMTest, BaiduLoadTest) {
-  Str name = "data/baidu_format.txt";
+  Str name = "tmp/baidu_format.txt";
   User user;
   LoadBaidu(name, &user);
   User train;
   User test;
   SplitData(user, 0.8, &train, &test);
-  SaveBaidu("data/baidu_train.txt", train);
-  SaveBaidu("data/baidu_test.txt", test);
+  SaveBaidu("tmp/baidu_train.txt", train);
+  SaveBaidu("tmp/baidu_test.txt", test);
   EXPECT_LT(std::abs(5.0 - user.rating[10][0]), 0.00001);
   EXPECT_EQ(568, user.item[10][0]);
 }
@@ -39,7 +38,7 @@ void Init(ml2::RBM* rbm) {
 TEST(RBMTest, BaiduTest) {
   ml2::RBM rbm;
   Init(&rbm);
-  Str name = "data/baidu_format.txt";
+  Str name = "tmp/baidu_format.txt";
   User train;
   User test;
   LoadBaidu(name, 0.8, &train, &test);
@@ -52,16 +51,16 @@ void InitMovieLen(ml2::RBM* rbm) {
   int f = 100;
   int k = 6;
   double momentum = 0.0;
-  double eta = 0.002;
+  double eta = 0.1;
   int bach_size = 100;
   rbm->Init(f, m, k, bach_size, momentum, eta);
 }
 
 void LoadMovieLen(User* train, User* test) {
-  Str train_file = "data/u1.base";
-  // Str train_file = "data/train_g20.txt";
-  Str test_file = "data/u1.test";
-  // Str test_file = "data/test_g20.txt";
+  Str train_file = "tmp/u1.base";
+  // Str train_file = "tmp/train_g20.txt";
+  Str test_file = "tmp/u1.test";
+  // Str test_file = "tmp/test_g20.txt";
   LoadMovieLen(train_file, train);
   LoadMovieLen(test_file, test);
 }
@@ -70,8 +69,11 @@ TEST(RBMTest, LoadMovieLenTest) {
   User train;
   User test;
   LoadMovieLen(&train, &test);
+  EXPECT_EQ(944, train.item.size());
+  EXPECT_EQ(5, train.rating[1][0]);
   EXPECT_EQ(3, train.rating[1][1]);
   EXPECT_EQ(4, train.rating[1][2]);
+  EXPECT_EQ(3, test.rating[459][0]);
   EXPECT_EQ(3, test.rating[460][0]);
   EXPECT_EQ(5, test.rating[462][0]);
 }
@@ -82,13 +84,13 @@ TEST(RBMTest, MovieLenTest) {
   LoadMovieLen(&train, &test);
   ml2::RBM rbm;
   InitMovieLen(&rbm);
-  ml2::RBMLearning(train, test, 2000, rbm.bach_size, &rbm);
+  ml2::RBMLearning(train, test, 2000, &rbm);
   // RBMTest(train, test, rbm);
 }
 
 TEST(EigenRBMTest, MovieLenTest) {
-  #define TRAIN_PATH "data/train_g20.txt"
-  #define TEST_PATH "data/test_g20.txt"
+  #define TRAIN_PATH "tmp/train_g20.txt"
+  #define TEST_PATH "tmp/test_g20.txt"
   // #define TRAIN_PATH "data/baidu_train.txt"
   // #define TEST_PATH "data/baidu_test.txt"
   #define N_HIDDEN 100
@@ -103,11 +105,9 @@ TEST(EigenRBMTest, MovieLenTest) {
   SpMat test_v_u = test_u_v.transpose();
   int M = u_v.cols();
   int N = u_v.rows();
-
   RBM rbm(u_v, N, N_HIDDEN, N_SOFTMAX);
   rbm.Train(u_v, test_u_v, 2000, 0.1, 100);
 }
-*/
 
 TEST(Ais, UniformSampleTest) {
   Corpus c;
@@ -145,10 +145,11 @@ TEST(Ais, LogPartitionTest) {
   ZeroRep(size_f, size_v, &rep);
   int doc_len = 2;
   int word_num = 2;
-  EXPECT_DOUBLE_EQ(2, exp(LogMultiPartition(doc_len, word_num, rep)));
+  double beta_a = 1;
+  EXPECT_DOUBLE_EQ(2, exp(LogMultiPartition(doc_len, word_num, beta_a, rep)));
   size_f = 2;
   ZeroRep(size_f, size_v, &rep);
-  EXPECT_DOUBLE_EQ(4, exp(LogMultiPartition(doc_len, word_num, rep)));
+  EXPECT_DOUBLE_EQ(4, exp(LogMultiPartition(doc_len, word_num, beta_a, rep)));
 }
 
 TEST(Ais, WAisTest) {

@@ -9,11 +9,11 @@ cmd="
   --k=5
   --hidden=150
   --it_num=1000000
-  --type=eigen
-  --type=stl
   --type=softmax
-  --train_path=data/train_g20.txt
-  --test_path=data/test_g20.txt
+  --type=stl
+  --type=eigen
+  --train_path=tmp/train_g20.txt
+  --test_path=tmp/test_g20.txt
   "
 gdb="
   gdb ./makeout/rbm_unittest.o

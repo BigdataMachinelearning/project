@@ -3,7 +3,7 @@
 #ifndef RBM_RBM_UTIL_H_
 #define RBM_RBM_UTIL_H_
 #include "base/base_head.h"
-#include "ml/rbm/rbm.h"
+#include "ml/rbm/rbm2.h"
 #include "ml/util.h"
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
@@ -23,8 +23,9 @@ double SquareError(const VReal &lhs, const VReal &rhs);
 double RBMTest(const User &train, const User &test, const ml2::RBM &rbm);
 size_t Size(const VVInt &item);
 void ReadData(const Str &path, int rows, int cols, SpMat *m);
+void ReadData(const Str &path, SpMat *mat);
 
-inline double ExpectSoftmax(const VReal &a){
+inline double ExpectRating(const VReal &a){
   double s = 0;
   for(size_t i = 0; i < a.size(); ++i){
     s += (i + 1) * a[i];
