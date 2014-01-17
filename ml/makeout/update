@@ -13,3 +13,6 @@ document.o:
 
 util.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/ml/util.cc $(Include) -Wno-deprecated
+
+eigen.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/ml/eigen.cc $(Include) -Wno-deprecated
