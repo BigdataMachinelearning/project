@@ -4,7 +4,6 @@
 #define ML_EIGEN_H_
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
-#include "base/base_head.h"
 typedef Eigen::SparseMatrix<double> SpMat;
 typedef Eigen::SparseVector<double> SpVec;
 

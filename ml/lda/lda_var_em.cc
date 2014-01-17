@@ -48,17 +48,17 @@ void LDA::InitVar(int d, LdaModelC &m, VReal* digamma, VReal* ga,
   }
   for (VReal::size_type n = 0; n < phi->size(); n++) {
     phi->at(n).resize(m.num_topics);
-    double s=0;
+    // double s = 0;
     for (int k = 0; k < m.num_topics; k++) {
-      //(*phi)[n][k] = 1.0 / m.num_topics;
-      (*phi)[n][k] = Random1();
-      s += (*phi)[n][k];
+      (*phi)[n][k] = 1.0 / m.num_topics;
+      // (*phi)[n][k] = Random1();
+      // s += (*phi)[n][k];
     }
+    /*
     for (int k = 0; k < m.num_topics; k++) {
       (*phi)[n][k] /= s;
     }
-
-
+    */
   }
 }
 

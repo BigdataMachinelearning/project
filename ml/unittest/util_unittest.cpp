@@ -94,6 +94,12 @@ TEST(Util, RandomOrderTest) {
   }
   EXPECT_LT(c, 3);
 }
+
+TEST(Eigen, DemoTest) {
+  Eigen::Vector4d v1;  
+  v1<< 1,2,3,4;  
+  LOG(INFO) <<v1;
+}
 } // namespace ml 
 
 int main(int argc, char* argv[]) {

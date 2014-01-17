@@ -6,6 +6,7 @@ RootPath=$root_path"/experiment/data/benchmark"
 export LD_LIBRARY_PATH="$Lib:LD_LIBRARY_PATH"
 cmd="
   ./makeout/util_unittest.o
+  --gtest_filter=Eigen.DemoTest
   "
 exec $cmd
 

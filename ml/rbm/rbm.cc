@@ -1,5 +1,5 @@
-// Copyright 2013 zhangw. All Rights Reserved.
-// Author: zhangw@ios.ac.cn (Wei Zhang)
+// Copyright 2013 zhangwei, lijiankou. All Rights Reserved.
+// Author: zhangw@ios.ac.cn  lijk_start@163.com
 #include "ml/rbm/rbm.h"
 
 #include "base/base_head.h"
