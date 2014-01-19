@@ -2,6 +2,8 @@
 // author: lijk_start@163.com (jiankou li)
 #include "ml/eigen.h"
 
+#include "ml/util.h"
+
 void Sample(EVec *h) {
   for (int i = 0; i < h->size(); ++i) {
     (*h)[i] = Sample1((*h)[i]);
@@ -28,12 +30,28 @@ std::pair<int, int> Max(const TripleVec &vec) {
   return std::make_pair(row + 1, col + 1);
 }
 
-void ReadData(const Str &path, SpMat *mat) {
+std::pair<int, int> ReadData(const Str &path, SpMat *mat) {
   TripleVec vec;
   ReadData(path, &vec);
+  std::pair<int, int> p;
   if (mat->cols() == 0) {
-    std::pair<int, int> p = Max(vec);
+    p = Max(vec);
     mat->resize(p.first, p.second);
   }
   mat->setFromTriplets(vec.begin(), vec.end());
+  return p;
+}
+
+void NormalRandom(EVec* des) {
+  for (int i = 0; i < des->size(); i++) {
+    (*des)[i] = ml::NormalSample() / 100;
+  }
+}
+
+void NormalRandom(EMat *mat) {
+  for (int i = 0; i < mat->rows(); i++) {
+    for (int j = 0; j < mat->cols(); j++) {
+      (*mat)(i, j) = ml::NormalSample() / 100;
+    }
+  }
 }

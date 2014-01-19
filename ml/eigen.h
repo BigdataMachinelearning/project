@@ -17,8 +17,11 @@ typedef Eigen::VectorXd EVec;
 typedef Eigen::Triplet<double> Triple;
 typedef std::vector<Eigen::Triplet<double> > TripleVec;
 
-void Sample(EVec *h);
 void ReadData(const Str &path, TripleVec* vec);
 std::pair<int, int> Max(const TripleVec &vec);
-void ReadData(const Str &path, SpMat *mat);
+std::pair<int, int> ReadData(const Str &path, SpMat *mat);
+
+void Sample(EVec *h);
+void NormalRandom(EMat *mat);
+void NormalRandom(EVec *vec);
 #endif // ML_EIGEN_H_
