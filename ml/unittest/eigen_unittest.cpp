@@ -2,7 +2,7 @@
 // Author: lijk_start@163.com (Jiankou Li)
 #include "base/base_head.h"
 #include "ml/eigen.h"
-#include "ml/pmf.h"
+#include "ml/matrix_factorization.h"
 #include "ml/util.h"
 #include "gtest/gtest.h"
 
@@ -49,21 +49,23 @@ TEST(Eigen, NormalRandomTest) {
   LOG(INFO) << t.transpose();
 }
 
-TEST(PMFTest, PMFTest) {
-  Str path1("rbm/tmp/train_g20.txt");
-  Str path2("rbm/tmp/test_g20.txt");
+TEST(MatrixFactorization, GradientDescent) {
+  Str path1("../data/movielen_train.txt");
+  Str path2("../data/movielen_test.txt");
   SpMat train;
   SpMat test;
   std::pair<int, int> p = ReadData(path1, &train);
   ReadData(path2, &test);
-  double eta = 0.0001;
-  int it_num = 10000;
-  double lambda = 0;
-  PMF pmf(eta, lambda);
-  int k = 4;
+  double eta = 0.005;
+  int it_num = 100000;
+  double lambda = 0.12;
+  int k = 10;
   EMat v(k, p.first);
   EMat u(k, p.second);
-  pmf.Learning(it_num, train, test, &u, &v);
+  v.setRandom();
+  u.setRandom();
+  BGD(it_num, eta, lambda, train, test, &u, &v);
+  // SGD(it_num, eta, lambda, train, test, &u, &v);
 }
 } // namespace ml 
 

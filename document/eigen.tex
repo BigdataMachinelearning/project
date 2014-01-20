@@ -1,0 +1,40 @@
+\chapter{Sparse Matrix}
+\begin{enumerate}
+\item class Triplet
+\begin{itemize}
+\item Triplet() : m$\_$row(0), m$\_$col(0), m$\_$value(0)
+\item Triplet(const Index$\&$ i, const Index$\&$ j, const Scalar$\&$ v = Scalar(0))
+\item const Index $\&$ col () const
+\item const Index $\&$ 	row () const
+\item const Scalar $\&$ value () const
+\end{itemize}
+\item Sparse Matrix
+\\用稀疏的方式表达矩阵，
+\begin{itemize}
+\item binaryExpr (const SparseMatrixBase$<$ OtherDerived $> \&$other,
+const CustomBinaryOp $\&$func = CustomBinaryOp() )	
+\\二值操作, Eigen有一系列的二值运算，输入一个Eigen对象，逐个元素进行
+运算，返回一个相应的运算对象
+\item size()
+\\返回矩阵大小，这里的大小是矩阵的真正大小，不是压缩后的大小。
+\item resize(int row, int col)
+\\这里的resize和stl的resize不太一样，resize的结果是矩阵的真实大小，
+不是存储的大小，因此size()返回的就是resize()时候设置的
+\item 元素访问，
+SpMat有两层，外层和内层，如果是列优先，外层指的是每列的起始
+位置，内层指的是低维。
+\\innerSize()返回内部维数大小， cols()返回列数。
+innerSize()在列优先矩阵里面相当于rows()
+\item setFromTriplets(beg, end);
+\\SpMat很重要的一个函数，输入是三元组，运行该函数前需要首先进行
+resize(), 返回一个压缩矩阵
+\item reserve()
+\\预留空间，在insert前使用，预告估计要分配的元素，
+可以使得insert的时间最快。
+\item insert(rows, cols)
+\\返回一个引用，用于存放值，在不重新分配空间的情况下，
+可以在对数时间完成，如果是排好序的，可以在常数时间完成?
+eigen的默认情况是，插入一个新值，矩阵不再是压缩形式，预留两个
+空间。
+\end{itemize}
+\end{enumerate}

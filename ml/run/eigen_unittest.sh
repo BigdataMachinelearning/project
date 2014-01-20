@@ -8,8 +8,8 @@ cmd="
   ./makeout/eigen_unittest.o
   --gtest_filter=Eigen.NormalRandomTest
   --gtest_filter=Eigen.DemoTest
-  --gtest_filter=PMFTest.PMFTest
   --gtest_filter=Eigen.ReadDataTest
+  --gtest_filter=MatrixFactorization.GradientDescent
   "
 exec $cmd
 
