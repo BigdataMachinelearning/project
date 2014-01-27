@@ -21,6 +21,9 @@ probability.o:
 util.o:
 	$(CC) $(CXXFLAGS) $(BaseDir)/ml/util.cc $(Include) -Wno-deprecated
 
+eigen.o:
+	$(CC) $(CXXFLAGS) $(BaseDir)/ml/eigen.cc $(Include) -Wno-deprecated
+
 rbm2.o:
 	$(CC) $(CXXFLAGS) $(WorkDir)/rbm2.cc $(Include) -Wno-deprecated
 

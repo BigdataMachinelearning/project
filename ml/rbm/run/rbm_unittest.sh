@@ -11,8 +11,8 @@ cmd="
   --gtest_filter=Ais.LogPartitionTest
   --gtest_filter=RBMTest.BaiduTest
   --gtest_filter=RBMTest.BaiduLoadTest
-  --gtest_filter=RBMTest.LoadMovieLenTest
   --gtest_filter=RBMTest.MovieLenTest
+  --gtest_filter=RBMTest.LoadMovieLenTest
   "
 gdb="
   gdb ./makeout/rbm_unittest.o

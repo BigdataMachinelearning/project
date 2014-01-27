@@ -6,6 +6,7 @@ name:=rbm_unittest
 $(name)_update_dep:=\
   rbm2.o\
   rbm_util.o\
+  eigen.o\
   rbm.o
 $(name)_remain_dep:=\
   repsoftmax.o\
@@ -22,11 +23,12 @@ include post_unittest_makefile
 name:=rbm_app
 $(name)_update_dep:=\
   rbm_util.o\
-  rbm.o\
+  rbm.o
+$(name)_remain_dep:=\
+  ais.o\
   rbm2.o\
   join.o\
-  ais.o
-$(name)_remain_dep:=\
+  eigen.o\
   util.o\
   repsoftmax.o\
   probability.o\

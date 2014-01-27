@@ -7,18 +7,20 @@ cmd="
   --bach_size=200
   --m=2000
   --k=5
-  --hidden=150
+  --hidden=2
   --it_num=1000000
   --type=softmax
   --type=stl
   --type=eigen
   --train_path=tmp/train_g20.txt
   --test_path=tmp/test_g20.txt
+  --train_path=tmp/train1
+  --test_path=tmp/test1
   "
 gdb="
-  gdb ./makeout/rbm_unittest.o
+  gdb ./makeout/rbm_app.o
   "
 
-#exec $gdb
 exec $cmd
+#exec $gdb
 

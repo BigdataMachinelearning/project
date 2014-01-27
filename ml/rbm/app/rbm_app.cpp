@@ -23,9 +23,9 @@ DEFINE_int32(hidden, 100, "hidden feature size");
 DEFINE_int32(it_num, 1000, "iter number");
 DEFINE_int32(algorithm_type, 1, "iter number");
 
-DEFINE_string(type, "softmax", "");
-DEFINE_string(train_path, "", "");
-DEFINE_string(test_path, "", "");
+DEFINE_string(type, "eigen", "");
+DEFINE_string(train_path, "tmp/train1", "");
+DEFINE_string(test_path, "tmp/test1", "");
 
 namespace ml {
 void InitMovieLen(ml2::RBM* rbm) {
@@ -47,20 +47,6 @@ void App() {
   InitMovieLen(&rbm);
   RBMLearning(train, test, FLAGS_it_num, &rbm);
   // RBMTest(train, test, rbm);
-}
-
-void App2() {
-  if (FLAGS_type != "eigen") {
-    return;
-  }
-  SpMat u_v;
-  ReadData(FLAGS_train_path, 0, 0, &u_v);
-  // SpMat v_u = u_v.transpose();
-  SpMat test_u_v;
-  ReadData(FLAGS_test_path, u_v.rows(), u_v.cols(), &test_u_v);
-  // SpMat test_v_u = test_u_v.transpose();
-  RBM rbm(u_v, u_v.rows(), FLAGS_hidden, FLAGS_k);
-  rbm.Train(u_v, test_u_v, 2000, FLAGS_eta, FLAGS_bach_size);
 }
 
 void App3() {
@@ -93,6 +79,35 @@ void App3() {
   double beta_a = 1;
   double p = LogMultiPartition(corpus.TLen(0), corpus.ULen(0), beta_a, rep);
   LOG(INFO) << p << " real:" << exp(p);
+}
+
+void AppRBM(const Str &train_path, const Str &test_path) {
+  SpMat u_v;
+  ReadData(FLAGS_train_path, 0, 0, &u_v);
+  SpMat test_u_v;
+  ReadData(FLAGS_test_path, u_v.rows(), u_v.cols(), &test_u_v);
+  // SpMat test_v_u = test_u_v.transpose();
+  RBM rbm(u_v, u_v.rows(), FLAGS_hidden, FLAGS_k);
+  rbm.Train(u_v, test_u_v, 2000, FLAGS_eta, FLAGS_bach_size);
+}
+
+void AppRBMTranspose(const Str &train_path, const Str &test_path) {
+  SpMat u_v;
+  ReadData(train_path, 0, 0, &u_v);
+  SpMat v_u = u_v.transpose();
+  SpMat test_u_v;
+  ReadData(test_path, u_v.rows(), u_v.cols(), &test_u_v);
+  SpMat test_v_u = test_u_v.transpose();
+  RBM rbm(v_u, v_u.rows(), FLAGS_hidden, FLAGS_k);
+  rbm.Train(v_u, test_v_u, 2000, FLAGS_eta, FLAGS_bach_size);
+}
+
+void App2() {
+  if (FLAGS_type != "eigen") {
+    return;
+  }
+  AppRBM(FLAGS_train_path, FLAGS_test_path);
+  //AppRBMTranspose(FLAGS_train_path, FLAGS_test_path);
 }
 } // namespace ml
 

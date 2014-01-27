@@ -62,7 +62,7 @@ void RBM::SampleV(const EVec &h, const SpVec &t, SpVec *v) {
   ExpectV(h, t, &vec);
   int i = 0;
   for (SpVec::InnerIterator it(t); it; ++it, ++i){
-    v->insert(it.index()) = ml::Sample(vec[i]);
+    v->insert(it.index()) = Sample(vec[i]);
   }
 }
 
