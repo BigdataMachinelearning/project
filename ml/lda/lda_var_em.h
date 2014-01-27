@@ -12,28 +12,34 @@ const int LAG = 5;
 namespace ml {
 class LDA {
  public:
+  void CreateSS(const Str &type, const Corpus &c, const LdaModel &m,
+                                 LdaSuffStats* ss) const;
+  double Likelihood(const Corpus &cor, int d, LdaModelC &m, VRealC &gamma,
+                                                 VVRealC &phi) const;
+  double Infer(const Corpus &cor, int d, LdaModelC &m, VReal* ga,
+                                            VVReal* phi) const;
+
+  double Perplexity(const Corpus &cor, const VVReal &gamma,
+                       const VVVReal &phi, const LdaModel &lda);
+  void RunEM(const Str &type, const Corpus &train,
+                const Corpus &test, LdaModel* m);
+
+  void Infer(LdaModelC &m, VVReal* ga, VVVReal* phi) const;
+  void Infer(const Corpus &cor, LdaModelC &m, VVReal* ga, VVVReal* phi) const;
+ 
+  void Gibbs(const Corpus &cor) const;
+
   inline void Init(float em_converged, int em_max_iter, int estimate_alpha,
                    int var_max_iter, int var_converged_,
                    double initial_alpha, int n_topic);
-  void RunEM(const Str &mode, double** var_gamma, double** phi);
-  void CreateSS(const Str &type, const Corpus &c, const LdaModel &m,
-                                 LdaSuffStats* ss) const;
-  double Infer(int d, LdaModelC &m, VReal* ga, VVReal* phi) const;
-  double Infer(LdaModelC &m, VReal* ga, VVReal* phi) const;
-  double Likelihood(int d, LdaModelC &m, VRealC &gamma, VVRealC &phi) const;
-  void LoadCorpus(const Str &filename);
-  inline int Len() const;
-  inline int MaxCorpusLen() const;
-  void RunEM(const Str &type, LdaModel* m) ;
-  void Infer(LdaModelC &m, VVReal* ga, VVVReal* phi) const;
-  inline void AddDoc(const Document &doc);
-  void Gibbs() const;
  private:
-  void InitVar(int d, const LdaModel &model, VReal* digamma, VReal* gamma,
-                                             VVReal* phi) const;
+  void InitVar(const Corpus &cor, int d, LdaModelC &m, VReal* digamma,
+                                      VReal* ga, VVReal* phi) const;
   void InitVar(const Document &doc, const LdaModel &model,
                double* digamma, double* gamma, double** phi) const;
-  double DocEStep(int d, const LdaModel &model, LdaSuffStats* ss) const;
+
+  double DocEStep(const Corpus &cor, int d, LdaModelC &m,
+                     LdaSuffStats* ss) const;
   float em_converged_;
   int em_max_iter_;
   int estimate_alpha_;
@@ -41,7 +47,6 @@ class LDA {
   int var_max_iter_;
   int n_topic_;
   int var_converged_;
-  Corpus corpus;
 };
 
 void LDA::Init(float em_converged, int em_max_iter, int estimate_alpha,
@@ -54,18 +59,6 @@ void LDA::Init(float em_converged, int em_max_iter, int estimate_alpha,
   n_topic_ = n_topic;
   var_converged_ = var_converged;
   var_max_iter_ = var_max_iter;
-}
-
-inline int LDA::Len() const {
-  return corpus.Len();
-}
-
-inline int LDA::MaxCorpusLen() const {
-  return corpus.MaxCorpusLen();
-}
-
-inline void LDA::AddDoc(const Document &doc) {
-  corpus.docs.push_back(doc);
 }
 } // namespace ml
 #endif // ML_LDA_VAR_EM_H

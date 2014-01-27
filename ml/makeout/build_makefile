@@ -10,6 +10,7 @@ Lib:=\
 
 Link:=\
   -lpthread\
+  -lgflags\
   -lglog
 P:=$(Include) $(Lib) $(Link)
 

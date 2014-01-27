@@ -13,7 +13,7 @@ void Softmax(const VReal &a, VReal *b) {
   }
 }
 
-int Sample(const VReal &a){
+int Sample(const VReal &a) {
   double r = Random1();
   for(size_t i = 0; i < a.size(); ++i) {
     r -= a[i];

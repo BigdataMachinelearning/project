@@ -9,7 +9,9 @@ cmd="
   --gtest_filter=Eigen.NormalRandomTest
   --gtest_filter=Eigen.DemoTest
   --gtest_filter=Eigen.ReadDataTest
+  --gtest_filter=MatrixFactorization.FengXing
   --gtest_filter=MatrixFactorization.GradientDescent
+  --gtest_filter=MatrixFactorization.GradientDescent2
   "
 exec $cmd
 

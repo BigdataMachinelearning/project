@@ -19,9 +19,12 @@ typedef std::vector<Eigen::Triplet<double> > TripleVec;
 
 void ReadData(const Str &path, TripleVec* vec);
 std::pair<int, int> Max(const TripleVec &vec);
-std::pair<int, int> ReadData(const Str &path, SpMat *mat);
+std::pair<int, int> ReadData(const Str &path, SpMat* mat);
+std::pair<int, int> ReadData(const Str &path, SpMat* train, SpMat* test);
 
 void Sample(EVec *h);
 void NormalRandom(EMat *mat);
 void NormalRandom(EVec *vec);
+void SplitData(const TripleVec &vec, double p, TripleVec* train,
+                                               TripleVec* test);
 #endif // ML_EIGEN_H_

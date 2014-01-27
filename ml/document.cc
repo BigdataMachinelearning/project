@@ -33,8 +33,6 @@ void Corpus::LoadData(const Str &filename) {
     docs.push_back(doc);
   }
   fclose(fileptr);
-  printf("number of docs    : %d\n", docs.size());
-  printf("number of terms   : %d\n", num_terms);
 }
 
 size_t Corpus::MaxCorpusLen() const {
@@ -90,6 +88,7 @@ void Corpus::ULen(VInt* v) const {
 
 void SplitData(const Corpus &c, double value, Corpus* train, Corpus* test) {
   train->num_terms = c.num_terms;
+  test->num_terms = c.num_terms;
   train->docs.reserve(c.Len());
   test->docs.reserve(c.Len());
   for (size_t i = 0; i < c.Len(); i++) {

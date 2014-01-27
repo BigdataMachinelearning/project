@@ -59,13 +59,49 @@ TEST(MatrixFactorization, GradientDescent) {
   double eta = 0.005;
   int it_num = 100000;
   double lambda = 0.12;
+  int k = 5;
+  EMat v(k, p.first);
+  EMat u(k, p.second);
+  v.setRandom();
+  u.setRandom();
+  // BGD(it_num, eta, lambda, train, test, &u, &v);
+  SGD(it_num, eta, lambda, train, test, &u, &v);
+}
+
+TEST(MatrixFactorization, FengXing) {
+  // Str path1("rbm/tmp/r_1");
+  Str path1("rbm/tmp/tr_nozero");
+  // Str path1("rbm/tmp/rating");
+  SpMat train;
+  SpMat test;
+  std::pair<int, int> p = ReadData(path1, &train, &test);
+  double eta = 0.01;
+  int it_num = 100000;
+  double lambda = 0.8;
   int k = 10;
   EMat v(k, p.first);
   EMat u(k, p.second);
   v.setRandom();
   u.setRandom();
-  BGD(it_num, eta, lambda, train, test, &u, &v);
-  // SGD(it_num, eta, lambda, train, test, &u, &v);
+  // BGD(it_num, eta, lambda, train, test, &u, &v);
+  SGD(it_num, eta, lambda, train, test, &u, &v);
+}
+
+TEST(MatrixFactorization, GradientDescent2) {
+  Str path1("../data/movielen_train.txt");
+  Str path2("../data/movielen_test.txt");
+  SpMat train;
+  SpMat test;
+  std::pair<int, int> p = ReadData(path1, &train);
+  ReadData(path2, &test);
+  double eta = 0.005;
+  int it_num = 100000;
+  double lambda = 0.1;
+  int k = 10;
+  MF mf;
+  RandomInit(p.second, p.first, k, &mf);
+  LOG(INFO) << k;
+  SGD(it_num, eta, lambda, train, test, &mf);
 }
 } // namespace ml 
 

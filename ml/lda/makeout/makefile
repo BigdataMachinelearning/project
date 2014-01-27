@@ -4,17 +4,17 @@ WorkDir:=$(BaseDir)/ml/lda
 
 name:=lda_unittest
 $(name)_update_dep:=\
+  document.o\
+  lda.o\
+  lda_model.o\
+  lda_var_em.o\
+  lda_gibbs.o
+$(name)_remain_dep:=\
   base.o\
   util.o\
   cokus.o\
   join.o\
-  lda.o\
-  lda_model.o\
-  lda_var_em.o\
-  lda_gibbs.o\
-  document.o\
-  string_util.o
-$(name)_remain_dep:=\
+  string_util.o\
   $(GTestDir)/gtest-all.o
 include post_unittest_makefile
 

@@ -6,10 +6,11 @@ cmd:=\
 main:
 	$(cmd); cd makeout; make clean; make
 
-name:=./run/document_unittest.sh
 name:=./run/info_unittest.sh
 name:=./run/util_unittest.sh
+name:=./run/document_unittest.sh
 name:=./run/eigen_unittest.sh
+name:=./run/eigen_app.sh
 .PHONY:run
 run:
 	$(name)

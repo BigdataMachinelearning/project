@@ -6,6 +6,26 @@
 #include "gtest/gtest.h"
 
 namespace ml {
+/*
+TEST(LDATest, GibbsTest) {
+  long t1;
+  (void) time(&t1);
+  seedMT(t1);
+  float em_converged = 1e-4;
+  int em_max_iter = 30;
+  int em_estimate_alpha = 1;
+  int var_max_iter = 20;
+  double var_converged = 1e-2;
+  double initial_alpha = 0.1;
+  int n_topic = 10;
+  LDA lda;
+  lda.Init(em_converged, em_max_iter, em_estimate_alpha, var_max_iter,
+                         var_converged, initial_alpha, n_topic);
+  Str data = "../../data/ap.dat";
+  lda.LoadCorpus(data);
+  lda.Gibbs();
+}
+
 TEST(LDATest, NewArrayTest) {
   double **a = NewArray(2, 3);
   Init(2, 3, 1.0, a);
@@ -18,6 +38,7 @@ TEST(LDATest, LikelihoodTest) {
   LdaModel m;
   NewLdaModel(num_topics, num_terms, &m);
   Init(num_topics, num_terms, 0.5, m.log_prob_w);
+
   Document doc;
   int len = 2;
   doc.total = 4;
@@ -42,13 +63,14 @@ TEST(LDATest, LikelihoodTest) {
   Init(num_topics, num_terms, value3, &phi3);
   EXPECT_LT(std::abs(-2.37435 - lda.Likelihood(0, m, gamma3, phi3)), 0.0001);
 }
- 
+*/
+
 TEST(LDATest, VAREMTest) {
   long t1;
   (void) time(&t1);
   seedMT(t1);
   float em_converged = 1e-4;
-  int em_max_iter = 30;
+  int em_max_iter = 1000;
   int em_estimate_alpha = 1;
   int var_max_iter = 20;
   double var_converged = 1e-2;
@@ -57,37 +79,23 @@ TEST(LDATest, VAREMTest) {
   LDA lda;
   lda.Init(em_converged, em_max_iter, em_estimate_alpha, var_max_iter,
                          var_converged, initial_alpha, n_topic);
+  Corpus cor;
   Str data = "../../data/ap.dat";
-  lda.LoadCorpus(data);
-  Str result = "result/result";
+  cor.LoadData(data);
+  Corpus train;
+  Corpus test;
+  double p = 0.8;
+  SplitData(cor, p, &train, &test);
   Str type = "seeded";
   LdaModel m;
-  lda.RunEM(type, &m);
-  LOG(INFO) << m.alpha;
-  VVReal gamma;
-  VVVReal phi;
-  lda.Infer(m, &gamma, &phi);
-  WriteStrToFile(Join(gamma, " ", "\n"), "gamma");
-  WriteStrToFile(Join(phi, " ", "\n", "\n\n"), "phi");
-}
+  lda.RunEM(type, train, test, &m);
 
-TEST(LDATest, GibbsTest) {
-  long t1;
-  (void) time(&t1);
-  seedMT(t1);
-  float em_converged = 1e-4;
-  int em_max_iter = 30;
-  int em_estimate_alpha = 1;
-  int var_max_iter = 20;
-  double var_converged = 1e-2;
-  double initial_alpha = 0.1;
-  int n_topic = 10;
-  LDA lda;
-  lda.Init(em_converged, em_max_iter, em_estimate_alpha, var_max_iter,
-                         var_converged, initial_alpha, n_topic);
-  Str data = "../../data/ap.dat";
-  lda.LoadCorpus(data);
-  lda.Gibbs();
+  // LOG(INFO) << m.alpha;
+  // VVReal gamma;
+  // VVVReal phi;
+  // lda.Infer(m, &gamma, &phi);
+  // WriteStrToFile(Join(gamma, " ", "\n"), "gamma");
+  // WriteStrToFile(Join(phi, " ", "\n", "\n\n"), "phi");
 }
 } // namespace ml
 
