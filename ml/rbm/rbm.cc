@@ -147,6 +147,46 @@ void RBM::Train(const SpMat &train, const SpMat &test, int niter, double alpha,
   }
 }
 
+void RBM::SampleH(const SpMat &train, VVInt* h) {
+  for(int n = 1; n < train.cols(); n++) {
+    VInt tmp;
+    SampleH(train.col(n), &h0);
+    for (int i = 0; i < h0.size(); i++) {
+      tmp.push_back(h0[i]);
+    }
+    h->push_back(tmp);
+  }
+}
+
+void ReadH(const Str &path, std::vector<EVec>* h) {
+  LOG(INFO) << path;
+  FILE *fin = fopen(path.c_str(), "r");
+  VReal h2(10);
+  int doc_id;
+  while(fscanf(fin, "%d %f %f %f %f %f %f %f %f %f %f", &doc_id, 
+    &h2[0], &h2[1], &h2[2], &h2[3], &h2[4], &h2[5], &h2[6], &h2[7], 
+                   &h2[8], &h2[9]) > 0) {
+    (*h)[doc_id].resize(h2.size());
+    for (size_t i = 0; i < h2.size(); i++) {
+      (*h)[doc_id][i] = h2[i];
+    }
+  }
+}
+
+double RBM::LRPredict(const SpMat &train, const SpMat &test) {
+  std::vector<EVec> h;
+  h.resize(train.cols());
+  Str path = "tmp/fengxing/data/sigmoid";
+  ReadH(path, &h);
+  double rmse = 0;
+  for(int n = 0; n < train.cols(); n++) {
+    ExpectRating(h[n], test.col(n), &v0);
+    v0 -= test.col(n);
+    rmse += v0.cwiseAbs2().sum();
+  }
+  return sqrt(rmse/test.nonZeros());
+}
+
 double RBM::Predict(const SpMat &train, const SpMat &test) {
   double rmse = 0;
   for(int n = 0; n < train.cols(); n++) {

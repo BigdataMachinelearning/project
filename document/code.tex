@@ -57,10 +57,67 @@
 \end{enumerate}
 
 \chapter{ML}
+
 \section{document.h}
+
+\subsection{Corpus}
+\begin{enumerate}
+\item void NewLatent(VVInt* z) const;
+\item void NewLatent(VVReal* z) const;
+\item void NewLatent(VVVReal* z, int k) const;
+\\该函数被gibbs.h使用。
+\end{enumerate}
+
+\section{eigen.h}
+
+\begin{enumerate}
+\item void ReadData(const Str $\&$path, TripleVec* vec);
+\item pair$<$int, int$>$ Max(const TripleVec $\&$vec);
+\item pair$<$int, int$>$ ReadData(const Str $\&$path, SpMat *mat);
+\item void Sample(EVec *h);
+\item void NormalRandom(EMat *mat);
+\item void NormalRandom(EVec *vec);
+
+\item 使用文件
+\begin{enumerate}
+\item ml/rbm/rbm.h
+\end{enumerate}
+\end{enumerate}
+
+\section{util.h}
+\begin{enumerate}
+\item void Softmax(const VReal $\&$a, VReal *b);
+\item int Sample(const VReal $\&$a);
+\item int SoftmaxSample(const VReal $\&$a);
+\item double NormalSample();
+
+\item void RandomInit(int len, VReal* des);
+\item void RandomInit(int row, int col, VVReal* des);
+\item void RandomInit(int len1, int len2, int len3, VVVReal* des);
+
+\item void RandomOrder(int len, int random\_num, VInt* des);
+
+\item double Sum(const VReal $\&$v);
+\item double Sum(const VVReal $\&$v);
+\item double Sum(const VVVReal $\&$v);
+
+\item double Var(const VReal $\&$v);
+\item double Var(const VVReal $\&$v);
+\item double Var(const VVVReal $\&$v);
+
+\item double Mean(const VReal $\&$v);
+\item double Mean(const VVReal $\&$v);
+\item double Mean(const VVVReal $\&$v);
+\item 使用文件
+\begin{enumerate}
+\item ml/rbm/rbm.h
+\end{enumerate}
+\end{enumerate}
 
 \section{rbm}
 \subsection{ais.h}
 \begin{enumerate}
 \item double LogPartition(int doc\_len, int word\_num, const RepSoftMax \&rep);
 \end{enumerate}
+
+\section{util.h}

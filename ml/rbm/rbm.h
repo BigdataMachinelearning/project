@@ -2,6 +2,7 @@
 // Author: zhangw@ios.ac.cn  lijk_start@163.com
 #ifndef ML_RBM_RBM_
 #define ML_RBM_RBM_
+#include "base/base_head.h"
 #include "ml/eigen.h"
 #include <vector>
 namespace ml {
@@ -11,7 +12,8 @@ class RBM {
   void Train(const SpMat &train, const SpMat &test, int niter,
                                  double alpha, int batch_size);
   double Predict(const SpMat &train, const SpMat &test);
-
+  double LRPredict(const SpMat &train, const SpMat &test);
+  void SampleH(const SpMat &train, VVInt* h);
  public:
   SpVec v0, vk;
   EVec h0, hk;

@@ -99,15 +99,19 @@ void AppRBMTranspose(const Str &train_path, const Str &test_path) {
   ReadData(test_path, u_v.rows(), u_v.cols(), &test_u_v);
   SpMat test_v_u = test_u_v.transpose();
   RBM rbm(v_u, v_u.rows(), FLAGS_hidden, FLAGS_k);
-  rbm.Train(v_u, test_v_u, 2000, FLAGS_eta, FLAGS_bach_size);
+  rbm.Train(v_u, test_v_u, FLAGS_it_num, FLAGS_eta, FLAGS_bach_size);
+  VVInt h;
+  rbm.SampleH(v_u, &h);
+  WriteStrToFile(Join(h, " ", "\n"), "tmp/fengxing/data/rating2tag");
+  LOG(INFO) << rbm.LRPredict(v_u, test_v_u);
 }
 
 void App2() {
   if (FLAGS_type != "eigen") {
     return;
   }
-  AppRBM(FLAGS_train_path, FLAGS_test_path);
-  //AppRBMTranspose(FLAGS_train_path, FLAGS_test_path);
+  // AppRBM(FLAGS_train_path, FLAGS_test_path);
+  AppRBMTranspose(FLAGS_train_path, FLAGS_test_path);
 }
 } // namespace ml
 
