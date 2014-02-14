@@ -40,7 +40,8 @@ inline double Test(const SpMat &mat, const MF &mf) {
       double a = mf.u.col(m).dot(mf.v.col(it.index())) + mf.bu(m) +
                                              mf.bv(it.index());
       a = a < 1 ? 1 : a;
-      a = a > 5 ? 5 : a;
+      //a = a > 5 ? 5 : a;
+      a = a > 2 ? 2 : a;
       rmse += Square(a - it.value());
     }
   }

@@ -8,8 +8,8 @@ cmd="
   ./makeout/eigen_app.o
   --train_path=../data/movielen_train.txt
   --test_path=../data/movielen_test.txt
-  --train_path=rbm/tmp/fengxing/train
-  --test_path=rbm/tmp/fengxing/test
+  --train_path=rbm/tmp/fengxing/data/train
+  --test_path=rbm/tmp/fengxing/data/test
   --k=10
   --lambda=0.1
   --eta=0.0001
