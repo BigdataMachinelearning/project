@@ -148,7 +148,7 @@ void RBM::Train(const SpMat &train, const SpMat &test, int niter, double alpha,
 }
 
 void RBM::SampleH(const SpMat &train, VVInt* h) {
-  for(int n = 1; n < train.cols(); n++) {
+  for(int n = 0; n < train.cols(); n++) {
     VInt tmp;
     SampleH(train.col(n), &h0);
     for (int i = 0; i < h0.size(); i++) {
@@ -156,6 +156,30 @@ void RBM::SampleH(const SpMat &train, VVInt* h) {
     }
     h->push_back(tmp);
   }
+}
+
+void ReadH(int h_num, const Str &path, std::vector<EVec>* h) {
+  LOG(INFO) << path;
+  VReal h2(h_num);
+  Str str;
+  ReadFileToStr(path, &str);
+  VStr lines;
+  SplitStr(str, "\n", &lines);
+  for (size_t i = 0; i < lines.size(); i++) {
+    if (TrimStr(lines[i]).empty()) {
+      continue;
+    }
+    LOG(INFO) << i << " " << lines.size();
+    LOG(INFO) << lines[i];
+    VStr l2;
+    SplitStr(lines[i], " ", &l2);
+    int doc_id = StrToInt(l2[0]);
+    (*h)[doc_id].resize(h2.size());
+    for (size_t j = 1; j < l2.size(); j++) {
+      (*h)[doc_id][j - 1] = StrToReal(l2[j]);
+    }
+  }
+  LOG(INFO) << "read";
 }
 
 void ReadH(const Str &path, std::vector<EVec>* h) {
@@ -185,6 +209,31 @@ double RBM::LRPredict(const SpMat &train, const SpMat &test) {
     rmse += v0.cwiseAbs2().sum();
   }
   return sqrt(rmse/test.nonZeros());
+}
+
+void RBM::LRExpectV(const SpMat &train, const SpMat &test) {
+  std::vector<EVec> h;
+  h.resize(train.cols());
+  Str path = "tmp/fengxing/data/sigmoid";
+  ReadH(150, path, &h);
+  VVReal tmp;
+  for(int n = 0; n < train.cols(); n++) {
+    VVReal tmp2;
+    // ExpectRating(h[n], test.col(n), &v0);
+    ExpectV(h[n], test.col(n), &tmp2);
+    int i = 0;
+    for (SpMat::InnerIterator it(test, n); it; ++it){
+      if (tmp2.size() == 0) {
+        break;
+      }
+      VReal tmp3;
+      tmp3.push_back(tmp2[i][1]);
+      i++;
+      tmp3.push_back(it.value());
+      tmp.push_back(tmp3);
+    }
+  }
+  WriteStrToFile(Join(tmp, " ", "\n"), "expectv");
 }
 
 double RBM::Predict(const SpMat &train, const SpMat &test) {

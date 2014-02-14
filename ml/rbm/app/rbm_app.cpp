@@ -103,7 +103,8 @@ void AppRBMTranspose(const Str &train_path, const Str &test_path) {
   VVInt h;
   rbm.SampleH(v_u, &h);
   WriteStrToFile(Join(h, " ", "\n"), "tmp/fengxing/data/rating2tag");
-  LOG(INFO) << rbm.LRPredict(v_u, test_v_u);
+  // LOG(INFO) << rbm.LRPredict(v_u, test_v_u);
+  rbm.LRExpectV(v_u, test_v_u);
 }
 
 void App2() {

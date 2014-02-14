@@ -14,6 +14,7 @@ class RBM {
   double Predict(const SpMat &train, const SpMat &test);
   double LRPredict(const SpMat &train, const SpMat &test);
   void SampleH(const SpMat &train, VVInt* h);
+  void LRExpectV(const SpMat &train, const SpMat &test);
  public:
   SpVec v0, vk;
   EVec h0, hk;
